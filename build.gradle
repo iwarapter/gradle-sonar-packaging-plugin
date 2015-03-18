@@ -1,0 +1,39 @@
+apply plugin: 'idea'
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+group = 'com.iadams.gradle.plugins.sonar.packaging'
+version = '0.1-SNAPSHOT'
+
+description = 'Gradle plugin for packaging SonarQube plugins.'
+
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+repositories {
+    jcenter()
+}
+dependencies {
+    compile localGroovy()
+    compile gradleApi()
+
+    testCompile 'com.netflix.nebula:nebula-test:1.12.+'
+}
+
+sourceSets {
+    integTest {
+        groovy.srcDir file('src/integTest/groovy')
+        resources.srcDir file('src/integTest/resources')
+        compileClasspath = sourceSets.main.output + configurations.testRuntime
+        runtimeClasspath = output + compileClasspath
+    }
+}
+
+task integTest(type: Test) {
+    testClassesDir = sourceSets.integTest.output.classesDir
+    classpath = sourceSets.integTest.runtimeClasspath
+    reports.html.destination = file("$buildDir/reports/integ")
+}
+
+integTest.mustRunAfter test
+check.dependsOn integTest
