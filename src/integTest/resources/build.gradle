@@ -1,0 +1,16 @@
+apply plugin: 'com.iadams.sonar-packaging'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    sonarqube group: 'org.codehaus.sonar.sslr', name: 'sslr-core', version: '1.20', transitive: false
+}
+
+sonarpackaging {
+    pluginKey = 'example'
+    pluginClass = 'com.example.HelloWorld'
+    pluginName 'Example'
+    pluginDescription = 'An Example Plugin!'
+}

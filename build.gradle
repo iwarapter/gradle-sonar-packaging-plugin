@@ -17,7 +17,7 @@ dependencies {
     compile localGroovy()
     compile gradleApi()
 
-    testCompile 'com.netflix.nebula:nebula-test:1.12.+'
+    testCompile ('com.netflix.nebula:nebula-test:2.2.0') { exclude group: 'org.codehaus.groovy' }
 }
 
 sourceSets {
