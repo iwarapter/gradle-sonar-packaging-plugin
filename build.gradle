@@ -33,6 +33,7 @@ task integTest(type: Test) {
     testClassesDir = sourceSets.integTest.output.classesDir
     classpath = sourceSets.integTest.runtimeClasspath
     reports.html.destination = file("$buildDir/reports/integ")
+    jvmArgs '-XX:MaxPermSize=256m'
 }
 
 integTest.mustRunAfter test

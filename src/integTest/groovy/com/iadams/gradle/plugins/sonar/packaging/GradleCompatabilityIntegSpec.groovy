@@ -26,6 +26,6 @@ class GradleCompatabilityIntegSpec extends IntegrationSpec {
         file('sonar-example-plugin/build/tmp/jar/MANIFEST.MF').text.contains('Plugin-Description: An Example Plugin!')
 
         where:
-        requestedGradleVersion << ['1.6','1.7','1.8','1.9','1.10','1.11','1.12','2.0','2.1','2.2', '2.3']
+        requestedGradleVersion << ['2.0','2.1','2.2', '2.3']
     }
 }
