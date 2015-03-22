@@ -18,13 +18,16 @@ class SonarApiRestartTask extends DefaultTask {
     @Input
     String serverUrl
 
+    @Input
+    String restartApiPath
+
     @TaskAction
     void restartServer() {
         logger.lifecycle "Restarting Server: ${getServerUrl()}"
         try {
             def http = new HTTPBuilder(getServerUrl())
 
-            http.post(path: '/api/system/restart', requestContentType: URLENC) { }
+            http.post(path: getRestartApiPath(), requestContentType: URLENC) { }
         }
         catch( HttpHostConnectException e ){
             throw new GradleException("Connection to ${getServerUrl()} refused.", e)

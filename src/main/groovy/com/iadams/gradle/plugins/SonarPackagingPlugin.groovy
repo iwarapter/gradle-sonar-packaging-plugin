@@ -70,7 +70,7 @@ class SonarPackagingPlugin implements Plugin<Project> {
             description = 'Copies the built plugin to the local server.'
             group = 'Sonar Packaging'
 
-            conventionMapping.localServer = { project.file(extension.localServerPluginDir) }
+            conventionMapping.localServer = { project.file(extension.pluginDir) }
             conventionMapping.pluginJar = { project.file("${project.libsDir}/${project.archivesBaseName}-${project.version}.jar") }
         }
 
@@ -78,7 +78,8 @@ class SonarPackagingPlugin implements Plugin<Project> {
             description = 'Restarts a SonarQube server running in dev mode.'
             group = 'Sonar Packaging'
 
-            conventionMapping.serverUrl = { extension.localServerUrl }
+            conventionMapping.serverUrl = { extension.serverUrl }
+            conventionMapping.restartApiPath = { extension.restartApiPath }
         }
     }
 }

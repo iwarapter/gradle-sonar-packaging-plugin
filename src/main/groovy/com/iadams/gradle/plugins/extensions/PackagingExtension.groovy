@@ -6,10 +6,24 @@ import org.gradle.api.Project
  */
 class PackagingExtension {
 
-    String localServerUrl = 'http://localhost:9000'
+    /**
+     * Address for the web server for the SonarApiRestartTask.
+     */
+    String serverUrl = 'http://localhost:9000'
+    /**
+     * Address path for the API call to restart Sonar server.
+     * Note: I wouldn't expect this to change.
+     */
+    String restartApiPath = '/api/system/restart'
 
-    String localServerPluginDir
+    /**
+     * Directory to the local sonar server's plugin directory.
+     */
+    String pluginDir
 
+    /**
+     *
+     */
     String pluginKey
 
     String pluginClass
@@ -18,26 +32,17 @@ class PackagingExtension {
 
     String pluginDescription
 
+    //TODO Add support for all the other Manifest info
     String pluginParent
-
     String requirePlugins
-
     String pluginUrl
-
     String pluginIssueTrackerUrl
-
     String pluginTermsConditionsUrl
-
     String addMavenDescriptor
-
     boolean skipDependenciesPackaging = false
-
     boolean useChildFirstClassLoader = false
-
     String basePlugin
-
     String includes
-
     String excludes
 
     PackagingExtension( Project project){
