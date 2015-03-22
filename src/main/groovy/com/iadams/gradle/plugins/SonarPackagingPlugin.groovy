@@ -1,6 +1,7 @@
 package com.iadams.gradle.plugins
 
 import com.iadams.gradle.plugins.extensions.PackagingExtension
+import com.iadams.gradle.plugins.tasks.SonarApiRestartTask
 import com.iadams.gradle.plugins.tasks.SonarPluginDeployTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -16,6 +17,7 @@ class SonarPackagingPlugin implements Plugin<Project> {
 
     static final SONAR_PACKAGING_EXTENSION = 'sonarpackaging'
     static final SONAR_PLUGIN_LOCAL_DEPLOY_TASK = 'localDeploy'
+    static final SONAR_API_RESTART_TASK = 'restartServer'
 
     @Override
     void apply(Project project) {
@@ -27,6 +29,11 @@ class SonarPackagingPlugin implements Plugin<Project> {
         addTasks(project)
     }
 
+    /**
+     * Adds the plugin deploy and server restart tasks.
+     *
+     * @param project
+     */
     void addTasks(Project project){
         def extension = project.extensions.findByName(SONAR_PACKAGING_EXTENSION)
 
@@ -63,8 +70,15 @@ class SonarPackagingPlugin implements Plugin<Project> {
             description = 'Copies the built plugin to the local server.'
             group = 'Sonar Packaging'
 
-            conventionMapping.localServer = { project.file(extension.localServer) }
+            conventionMapping.localServer = { project.file(extension.localServerPluginDir) }
             conventionMapping.pluginJar = { project.file("${project.libsDir}/${project.archivesBaseName}-${project.version}.jar") }
+        }
+
+        project.task( SONAR_API_RESTART_TASK, type: SonarApiRestartTask) {
+            description = 'Restarts a SonarQube server running in dev mode.'
+            group = 'Sonar Packaging'
+
+            conventionMapping.serverUrl = { extension.localServerUrl }
         }
     }
 }

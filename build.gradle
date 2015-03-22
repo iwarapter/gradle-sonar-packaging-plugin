@@ -18,6 +18,7 @@ repositories {
 dependencies {
     compile localGroovy()
     compile gradleApi()
+    compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7'
 
     testCompile ('com.netflix.nebula:nebula-test:2.2.0') { exclude group: 'org.codehaus.groovy' }
 }

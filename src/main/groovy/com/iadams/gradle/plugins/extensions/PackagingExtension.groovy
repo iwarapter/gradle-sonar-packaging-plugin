@@ -6,7 +6,9 @@ import org.gradle.api.Project
  */
 class PackagingExtension {
 
-    String localServer
+    String localServerUrl = 'http://localhost:9000'
+
+    String localServerPluginDir
 
     String pluginKey
 
@@ -41,6 +43,5 @@ class PackagingExtension {
     PackagingExtension( Project project){
         pluginName = project.name
         pluginDescription = project.description
-
     }
 }

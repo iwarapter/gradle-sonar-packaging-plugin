@@ -11,7 +11,7 @@ dependencies {
 version = '1.0'
 
 sonarpackaging {
-    localServer = "$buildDir/myServer"
+    localServerPluginDir = "$buildDir/myServer"
     pluginKey = 'example'
     pluginClass = 'com.example.HelloWorld'
     pluginName 'Example'
