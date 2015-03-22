@@ -1,11 +1,61 @@
 package com.iadams.gradle.plugins.sonar.packaging
 
 import nebula.test.IntegrationSpec
+import nebula.test.functional.ExecutionResult
 
 /**
  * Created by iwarapter
  */
 class SonarPackagingIntegSpec extends IntegrationSpec {
+
+    def "deploy plugin task is available"() {
+        setup:
+        writeHelloWorld('com.example')
+        copyResources('build.gradle', 'build.gradle')
+
+        when:
+        ExecutionResult result = runTasksSuccessfully('tasks')
+
+        then:
+        result.standardOutput.contains('localDeploy - Copies the built plugin to the local server.')
+    }
+
+    def "we can deploy the plugin to a directory"() {
+        setup:
+        writeHelloWorld('com.example')
+        copyResources('build.gradle', 'build.gradle')
+        directory('build/myServer')
+        settingsFile << '''rootProject.name="example"'''
+
+        when:
+        runTasksSuccessfully('build')
+        runTasksSuccessfully('localDeploy')
+
+        then:
+        fileExists('build/myServer/example-1.0.jar')
+    }
+
+
+    def "deploy plugin shows up-to-date if no change"() {
+        setup:
+        writeHelloWorld('com.example')
+        copyResources('build.gradle', 'build.gradle')
+        directory('build/myServer')
+        settingsFile << '''rootProject.name="example"'''
+
+        when:
+        runTasksSuccessfully('build')
+        runTasksSuccessfully('localDeploy')
+
+        then:
+        fileExists('build/myServer/example-1.0.jar')
+
+        when:
+        ExecutionResult result = runTasksSuccessfully('localDeploy')
+
+        then:
+        result.wasUpToDate(':localDeploy')
+    }
 
     def 'setup example build'() {
         setup:

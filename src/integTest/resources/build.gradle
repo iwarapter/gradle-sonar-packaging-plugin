@@ -8,7 +8,10 @@ dependencies {
     sonarqube group: 'org.codehaus.sonar.sslr', name: 'sslr-core', version: '1.20', transitive: false
 }
 
+version = '1.0'
+
 sonarpackaging {
+    localServer = "$buildDir/myServer"
     pluginKey = 'example'
     pluginClass = 'com.example.HelloWorld'
     pluginName 'Example'

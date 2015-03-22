@@ -1,6 +1,8 @@
 apply plugin: 'idea'
 apply plugin: 'groovy'
 apply plugin: 'maven'
+apply from: "$rootDir/gradle/jacoco.gradle"
+apply from: "$rootDir/gradle/sonar.gradle"
 
 group = 'com.iadams.gradle.plugins.sonar.packaging'
 version = '0.1-SNAPSHOT'
@@ -36,5 +38,30 @@ task integTest(type: Test) {
     jvmArgs '-XX:MaxPermSize=256m'
 }
 
+task jacocoIntegTestReport(type: JacocoReport) {
+    sourceSets sourceSets.main
+    executionData integTest
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.destination "${buildDir}/reports/jacocoInteg"
+    }
+}
+
+task jacocoCombinedTestReport(type: JacocoReport) {
+    sourceSets sourceSets.main
+    executionData test, integTest
+    reports {
+        xml.enabled true
+        csv.enabled false
+        html.destination "${buildDir}/reports/jacocoCombined"
+    }
+}
+
 integTest.mustRunAfter test
 check.dependsOn integTest
+
+//Generate Jacoco Reports after each test task.
+test.finalizedBy jacocoTestReport
+integTest.finalizedBy jacocoIntegTestReport
+integTest.finalizedBy jacocoCombinedTestReport

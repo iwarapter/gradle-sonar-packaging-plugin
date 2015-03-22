@@ -1,6 +1,7 @@
 package com.iadams.gradle.plugins.sonar.packaging
 
 import com.iadams.gradle.plugins.sonar.packaging.extensions.PackagingExtension
+import com.iadams.gradle.plugins.sonar.packaging.tasks.SonarPluginDeployTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.file.IdentityFileResolver
@@ -14,6 +15,7 @@ import org.gradle.api.tasks.bundling.Jar
 class SonarPackagingPlugin implements Plugin<Project> {
 
     static final SONAR_PACKAGING_EXTENSION = 'sonarpackaging'
+    static final SONAR_PLUGIN_LOCAL_DEPLOY_TASK = 'localDeploy'
 
     @Override
     void apply(Project project) {
@@ -43,7 +45,7 @@ class SonarPackagingPlugin implements Plugin<Project> {
                         }.join(' '),
                         "Plugin-Description": extension.pluginDescription,
                         //TODO Setup a way to handle developers
-                        //"Plugin-Developers": 'Iain Adams',
+                        //"Plugin-Developers": 'iwarapter',
                         "Plugin-Key": extension.pluginKey,
                         "Plugin-Name": extension.pluginName,
                         //"Plugin-Version": version,
@@ -55,6 +57,14 @@ class SonarPackagingPlugin implements Plugin<Project> {
             into ('META-INF/lib') {
                 from project.configurations.sonarqube
             }
+        }
+
+        project.task( SONAR_PLUGIN_LOCAL_DEPLOY_TASK, type: SonarPluginDeployTask) {
+            description = 'Copies the built plugin to the local server.'
+            group = 'Sonar Packaging'
+
+            conventionMapping.localServer = { project.file(extension.localServer) }
+            conventionMapping.pluginJar = { project.file("${project.libsDir}/${project.archivesBaseName}-${project.version}.jar") }
         }
     }
 }

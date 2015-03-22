@@ -6,6 +6,8 @@ import org.gradle.api.Project
  */
 class PackagingExtension {
 
+    String localServer
+
     String pluginKey
 
     String pluginClass
