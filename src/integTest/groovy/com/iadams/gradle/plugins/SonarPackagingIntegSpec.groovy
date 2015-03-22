@@ -2,13 +2,14 @@ package com.iadams.gradle.plugins
 
 import nebula.test.IntegrationSpec
 import nebula.test.functional.ExecutionResult
+import org.gradle.api.GradleException
 
 /**
  * Created by iwarapter
  */
 class SonarPackagingIntegSpec extends IntegrationSpec {
 
-    def "deploy plugin task is available"() {
+    def "applying plugins provides all tasks"() {
         setup:
         writeHelloWorld('com.example')
         copyResources('build.gradle', 'build.gradle')
@@ -18,6 +19,7 @@ class SonarPackagingIntegSpec extends IntegrationSpec {
 
         then:
         result.standardOutput.contains('localDeploy - Copies the built plugin to the local server.')
+        result.standardOutput.contains('restartServer - Restarts a SonarQube server running in dev mode.')
     }
 
     def "we can deploy the plugin to a directory"() {
@@ -34,7 +36,6 @@ class SonarPackagingIntegSpec extends IntegrationSpec {
         then:
         fileExists('build/myServer/example-1.0.jar')
     }
-
 
     def "deploy plugin shows up-to-date if no change"() {
         setup:
