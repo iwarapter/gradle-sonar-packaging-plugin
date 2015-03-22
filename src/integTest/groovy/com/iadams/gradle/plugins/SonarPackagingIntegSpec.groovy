@@ -1,4 +1,4 @@
-package com.iadams.gradle.plugins.sonar.packaging
+package com.iadams.gradle.plugins
 
 import nebula.test.IntegrationSpec
 import nebula.test.functional.ExecutionResult

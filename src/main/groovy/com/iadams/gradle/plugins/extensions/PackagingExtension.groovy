@@ -1,4 +1,4 @@
-package com.iadams.gradle.plugins.sonar.packaging.extensions
+package com.iadams.gradle.plugins.extensions
 
 import org.gradle.api.Project
 /**

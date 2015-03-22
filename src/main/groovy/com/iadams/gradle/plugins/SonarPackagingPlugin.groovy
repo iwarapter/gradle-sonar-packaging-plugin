@@ -1,7 +1,7 @@
-package com.iadams.gradle.plugins.sonar.packaging
+package com.iadams.gradle.plugins
 
-import com.iadams.gradle.plugins.sonar.packaging.extensions.PackagingExtension
-import com.iadams.gradle.plugins.sonar.packaging.tasks.SonarPluginDeployTask
+import com.iadams.gradle.plugins.extensions.PackagingExtension
+import com.iadams.gradle.plugins.tasks.SonarPluginDeployTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.internal.file.IdentityFileResolver

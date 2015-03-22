@@ -1,4 +1,4 @@
-package com.iadams.gradle.plugins.sonar.packaging.tasks
+package com.iadams.gradle.plugins.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.InputFile
