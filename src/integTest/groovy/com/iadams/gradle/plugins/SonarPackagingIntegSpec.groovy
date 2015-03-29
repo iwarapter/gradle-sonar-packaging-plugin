@@ -2,12 +2,18 @@ package com.iadams.gradle.plugins
 
 import nebula.test.IntegrationSpec
 import nebula.test.functional.ExecutionResult
-import org.gradle.api.GradleException
+
+import java.util.jar.JarFile
 
 /**
  * Created by iwarapter
  */
 class SonarPackagingIntegSpec extends IntegrationSpec {
+
+    void manifestContains(String buildJar, String key, String value){
+        JarFile jarFile = new JarFile(file(buildJar).absolutePath)
+        assert jarFile.manifest.mainAttributes.getValue(key) == value
+    }
 
     def "applying plugins provides all tasks"() {
         setup:
@@ -64,11 +70,12 @@ class SonarPackagingIntegSpec extends IntegrationSpec {
         setup:
         writeHelloWorld('com.example')
         copyResources('build.gradle', 'build.gradle')
+        settingsFile << '''rootProject.name="example"'''
         fork = true
 
         expect:
         runTasksSuccessfully('build')
-        file('build/tmp/jar/MANIFEST.MF').text.contains('Plugin-Description: An Example Plugin!')
+        manifestContains('build/libs/example-1.0.jar', 'Plugin-Description','An Example Plugin!')
     }
 
     def 'setup multi-project build'() {
@@ -83,6 +90,6 @@ class SonarPackagingIntegSpec extends IntegrationSpec {
 
         expect:
         runTasksSuccessfully('build')
-        file('sonar-example-plugin/build/tmp/jar/MANIFEST.MF').text.contains('Plugin-Description: An Example Plugin!')
+        manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Description','An Example Plugin!')
     }
 }

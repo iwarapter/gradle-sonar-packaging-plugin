@@ -1,7 +1,7 @@
 package com.iadams.gradle.plugins.extensions
 
-import org.gradle.api.GradleException
 import org.gradle.api.Project
+
 /**
  * Created by iwarapter
  */

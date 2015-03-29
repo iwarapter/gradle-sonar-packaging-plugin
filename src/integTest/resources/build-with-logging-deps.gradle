@@ -9,3 +9,11 @@ dependencies {
     compile 'log4j:log4j:1.2.17'
     compile 'com.google.gwt:gwt-user:2.7.0'
 }
+
+sonarpackaging {
+    pluginDir = "$buildDir/myServer"
+    pluginKey = 'example'
+    pluginClass = 'com.example.HelloWorld'
+    pluginName = 'Example'
+    pluginDescription = 'An Example Plugin!'
+}
