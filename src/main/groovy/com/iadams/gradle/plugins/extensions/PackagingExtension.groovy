@@ -1,5 +1,6 @@
 package com.iadams.gradle.plugins.extensions
 
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 /**
  * Created by iwarapter
@@ -33,17 +34,19 @@ class PackagingExtension {
     String pluginDescription
 
     //TODO Add support for all the other Manifest info
-    String pluginParent
-    String requirePlugins
-    String pluginUrl
-    String pluginIssueTrackerUrl
-    String pluginTermsConditionsUrl
-    String addMavenDescriptor
+    String pluginParent = ''
+    String pluginLicense = ''
+    String requirePlugins = ''
+    String pluginUrl = ''
+    String pluginIssueTrackerUrl = ''
+    String pluginTermsConditionsUrl = ''
+    String pluginSourceUrl = ''
+    String pluginDevelopers = ''
     boolean skipDependenciesPackaging = false
     boolean useChildFirstClassLoader = false
-    String basePlugin
-    String includes
-    String excludes
+    String basePlugin = ''
+
+    PackagingOrganizationExtension organization = new PackagingOrganizationExtension()
 
     PackagingExtension( Project project){
         pluginName = project.name
