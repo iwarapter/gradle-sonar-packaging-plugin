@@ -17,6 +17,7 @@ class GradleCompatabilityIntegSpec extends IntegrationSpec {
         writeHelloWorld('com.example', sub1)
         writeHelloWorld('com.example', sub2)
         copyResources('build.gradle', 'sonar-example-plugin/build.gradle')
+        fork = true
 
         and:
         gradleVersion = requestedGradleVersion

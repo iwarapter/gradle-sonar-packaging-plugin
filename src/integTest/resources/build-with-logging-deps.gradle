@@ -1,0 +1,11 @@
+apply plugin: 'com.iadams.sonar-packaging'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.codehaus.sonar:sonar-plugin-api:3.7'
+    compile 'log4j:log4j:1.2.17'
+    compile 'com.google.gwt:gwt-user:2.7.0'
+}

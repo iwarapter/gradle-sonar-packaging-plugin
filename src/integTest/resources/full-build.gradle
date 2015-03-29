@@ -1,0 +1,18 @@
+
+
+apply plugin: 'com.iadams.sonar-packaging'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.codehaus.sonar:sonar-plugin-api:4.5.2'
+    compile 'org.codehaus.sonar:sonar-deprecated:4.5.2'
+    compile 'org.codehaus.sonar:sonar-testing-harness:4.5.2'
+    compile 'org.codehaus.sonar.sslr:sslr-core:1.20'
+    compile 'org.codehaus.sonar.sslr:sslr-toolkit:1.20'
+    compile 'org.codehaus.sonar.sslr:sslr-testing-harness:1.20'
+    compile 'org.codehaus.sonar.sslr-squid-bridge:sslr-squid-bridge:2.6'
+    compile 'org.codehaus.sonar.sslr-squid-bridge:sslr-squid-bridge:2.4'
+}

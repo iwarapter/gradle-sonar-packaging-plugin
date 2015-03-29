@@ -1,0 +1,9 @@
+apply plugin: 'com.iadams.sonar-packaging'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.codehaus.sonar:sonar-plugin-api:3.7'
+}

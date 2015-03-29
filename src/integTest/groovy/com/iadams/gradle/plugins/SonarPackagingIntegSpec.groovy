@@ -28,6 +28,7 @@ class SonarPackagingIntegSpec extends IntegrationSpec {
         copyResources('build.gradle', 'build.gradle')
         directory('build/myServer')
         settingsFile << '''rootProject.name="example"'''
+        fork = true
 
         when:
         runTasksSuccessfully('build')
@@ -43,6 +44,7 @@ class SonarPackagingIntegSpec extends IntegrationSpec {
         copyResources('build.gradle', 'build.gradle')
         directory('build/myServer')
         settingsFile << '''rootProject.name="example"'''
+        fork = true
 
         when:
         runTasksSuccessfully('build')
@@ -62,6 +64,7 @@ class SonarPackagingIntegSpec extends IntegrationSpec {
         setup:
         writeHelloWorld('com.example')
         copyResources('build.gradle', 'build.gradle')
+        fork = true
 
         expect:
         runTasksSuccessfully('build')
@@ -72,6 +75,7 @@ class SonarPackagingIntegSpec extends IntegrationSpec {
         setup:
         def sub1 = addSubproject('example-squid')
         def sub2 = addSubproject('sonar-example-plugin')
+        fork = true
 
         writeHelloWorld('com.example', sub1)
         writeHelloWorld('com.example', sub2)

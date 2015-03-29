@@ -5,16 +5,18 @@ repositories {
 }
 
 dependencies {
-    compile 'org.codehaus.sonar:sonar-plugin-api:3.7'
-    sonarqube group: 'org.codehaus.sonar.sslr', name: 'sslr-core', version: '1.20', transitive: false
+    compile 'org.codehaus.sonar:sonar-plugin-api:4.5.2'
+    compile 'org.codehaus.sonar:sonar-squid:3.7'
+    compile 'commons-lang:commons-lang:2.6'
 }
 
 version = '1.0'
 
+
 sonarpackaging {
     pluginDir = "$buildDir/myServer"
     pluginKey = 'example'
-    pluginClass = 'com.example.HelloWorld'
+    pluginClass = 'org.sonar.plugins.example.SamplePlugin.java'
     pluginName = 'Example'
     pluginDescription = 'An Example Plugin!'
 }
