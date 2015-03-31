@@ -16,6 +16,9 @@ class PackagePluginTask extends Jar {
     private static final String[] GWT_ARTIFACT_IDS = ["gwt-user", "gwt-dev", "sonar-gwt-api"]
     private static final String[] LOG_GROUP_IDS = ["log4j", "commons-logging"]
 
+    //TODO Add all the plugin properties to the task.
+    //Pulling direct from the extension feels.... dirty
+
     @Input
     boolean isSkipDependenciesPackaging
 
@@ -29,8 +32,8 @@ class PackagePluginTask extends Jar {
         }
 
         def extension = project.extensions.findByName(SonarPackagingPlugin.SONAR_PACKAGING_EXTENSION)
-        List<ResolvedDependency> dependencies = new DependencyQuery(project).getNotProvidedDependencies()
-        project.logger.info "Creating Manifest"
+        getLogger().info "-------------------------------------------------------"
+        getLogger().info "Plugin definition in update center"
         manifest = new PluginManifest()
         manifest.addManifestProperty("Created-By", "Gradle")
         manifest.addManifestProperty("Built-By", System.getProperty('user.name'))
@@ -38,9 +41,6 @@ class PackagePluginTask extends Jar {
         manifest.addManifestProperty("Build-Time", new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"))
         manifest.addManifestProperty(PluginManifest.BUILD_DATE, new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"))
         manifest.addManifestProperty(PluginManifest.MAIN_CLASS, extension.pluginClass)
-        if(!isSkipDependenciesPackaging) {
-            manifest.addManifestProperty(PluginManifest.DEPENDENCIES, dependencies.collect{ "META-INF/lib/${it.moduleName}:${it.moduleVersion}.jar" }.join(' '))
-        }
         manifest.addManifestProperty(PluginManifest.DESCRIPTION, extension.pluginDescription)
         manifest.addManifestProperty(PluginManifest.DEVELOPERS, extension.pluginDevelopers)
         manifest.addManifestProperty(PluginManifest.HOMEPAGE, extension.pluginUrl)
@@ -71,13 +71,20 @@ class PackagePluginTask extends Jar {
             manifest.addManifestProperty(PluginManifest.BASE_PLUGIN, extension.basePlugin)
         }
 
-        from project.sourceSets.main.output
-        into('META-INF/lib') {
-            List<File> artifacts = []
-            dependencies.each{ ResolvedDependency dep->
-                dep.getModuleArtifacts().each{ artifacts.add(it.getFile().absoluteFile) }
+        getLogger().info '-------------------------------------------------------'
+
+        if(!isSkipDependenciesPackaging) {
+
+            List<ResolvedDependency> dependencies = new DependencyQuery(project).getNotProvidedDependencies()
+            from project.sourceSets.main.output
+            into('META-INF/lib') {
+                List<File> artifacts = []
+                dependencies.each{ ResolvedDependency dep->
+                    dep.getModuleArtifacts().each{ artifacts.add(it.getFile().absoluteFile) }
+                }
+                from artifacts
             }
-            from artifacts
+            manifest.addManifestProperty(PluginManifest.DEPENDENCIES, dependencies.collect{ "META-INF/lib/${it.moduleName}:${it.moduleVersion}.jar" }.join(' '))
         }
 
         super.copy()

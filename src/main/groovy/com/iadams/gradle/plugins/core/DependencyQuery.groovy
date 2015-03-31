@@ -59,7 +59,13 @@ class DependencyQuery {
         }
     }
 
-    def pomReader(File pomFile) {
+    /**
+     * Parses a pom.xml and returns the packaging value
+     *
+     * @param pomFile
+     * @return
+     */
+    def getPomPackagingType(File pomFile) {
         project.logger.debug "Parsing $pomFile"
         def pom = new XmlSlurper().parseText(pomFile.text)
 
@@ -74,7 +80,30 @@ class DependencyQuery {
         }
     }
 
-    def isSonarPlugin(String plugin){
+    /**
+     * For each dependency, add all children in the given configuration (recursively)
+     *
+     * @param dependency
+     * @param configuration
+     * @param result
+     */
+    void getAllDependencies(ResolvedDependency dependency, String configuration, List<ResolvedDependency> result){
+
+        dependency.getChildren().each { child ->
+            if (child.getConfiguration() == configuration) {
+                result.add(child)
+                getAllDependencies(child, configuration, result)
+            }
+        }
+    }
+
+    /**
+     * Queries a plugin pom to check if the packaging type is sonar-plugin
+     *
+     * @param plugin
+     * @return
+     */
+    boolean isSonarPlugin(String plugin){
         def comp = getDependency(plugin)
         if(comp!=null) {
 
@@ -85,7 +114,7 @@ class DependencyQuery {
 
             for (component in result.resolvedComponents) {
                 for (art in component.getArtifacts(MavenPomArtifact)) {
-                    if (pomReader(art.file).equals('sonar-plugin')) {
+                    if (getPomPackagingType(art.file).equals('sonar-plugin')) {
                         return true
                     }
                 }

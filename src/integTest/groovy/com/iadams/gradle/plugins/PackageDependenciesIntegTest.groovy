@@ -3,6 +3,7 @@ package com.iadams.gradle.plugins
 import nebula.test.IntegrationSpec
 import nebula.test.functional.ExecutionResult
 
+import java.util.jar.JarEntry
 import java.util.jar.JarFile
 
 /**
@@ -16,25 +17,34 @@ class PackageDependenciesIntegTest extends IntegrationSpec{
     }
 
     boolean dependencyExists(String buildJar, String name){
-        JarFile jarFile = new JarFile(file(buildJar).absolutePath)
-        return jarFile.getEntry(name)
+        JarFile jar = new JarFile(file(buildJar).absolutePath)
+        JarEntry entry = jar.getJarEntry(name)
+        if(entry != null){
+            return true
+        }else {
+            return false
+        }
     }
 
     def "dependencies by sonar are not packaged"() {
         setup:
         //forked for dependency resolution.
         fork = true
+        remoteDebug = true
         copyResources('build-with-sonar-dep.gradle', 'build.gradle')
 
         expect:
         runTasksSuccessfully('build')
         dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/commons-lang-2.6.jar")
+        !dependencyExists('build/libs/example-1.0.jar', 'META-INF/lib/sonar-plugin-api-4.5.2.jar')
+        !dependencyExists('build/libs/example-1.0.jar', 'META-INF/lib/sonar-squid-3.7.jar')
     }
 
     def "sonar plugins are not packaged"() {
         setup:
         //forked for dependency resolution.
         fork = true
+        remoteDebug = true
         copyResources('build-with-sonar-dep.gradle', 'build.gradle')
 
         expect:

@@ -7,3 +7,7 @@ jacocoTestReport {
         html.destination "${buildDir}/reports/jacocoTests"
     }
 }
+
+tasks.withType(JacocoReport){
+    group = 'verification'
+}
