@@ -1,29 +1,16 @@
 package com.iadams.gradle.plugins
 
-import nebula.test.IntegrationSpec
+import com.iadams.gradle.plugins.utils.SonarPackagingBaseIntegSpec
 import nebula.test.functional.ExecutionResult
-
-import java.util.jar.JarEntry
-import java.util.jar.JarFile
 
 /**
  * Created by iwarapter
  */
-class PackageDependenciesIntegTest extends IntegrationSpec{
+class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
 
     def setup(){
         copyResources('org/sonar/plugins/example/SamplePlugin.java', 'src/main/java/org/sonar/plugins/example/SamplePlugin.java')
         settingsFile << '''rootProject.name="example"'''
-    }
-
-    boolean dependencyExists(String buildJar, String name){
-        JarFile jar = new JarFile(file(buildJar).absolutePath)
-        JarEntry entry = jar.getJarEntry(name)
-        if(entry != null){
-            return true
-        }else {
-            return false
-        }
     }
 
     def "dependencies by sonar are not packaged"() {
