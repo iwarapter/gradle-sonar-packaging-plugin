@@ -45,6 +45,24 @@ class SonarPackagingPlugin implements Plugin<Project> {
         project.task( 'pluginPackaging', type: PackagePluginTask) {
             description = 'Updates the Jar file with the correct dependencies and manifest info.'
             group = SONAR_PACKAGING_GROUP
+
+            conventionMapping.pluginClass = { extension.pluginClass }
+            conventionMapping.pluginDescription = { extension.pluginDescription }
+            conventionMapping.pluginDevelopers = { extension.pluginDevelopers }
+            conventionMapping.pluginUrl = { extension.pluginUrl }
+            conventionMapping.pluginIssueTrackerUrl = { extension.pluginIssueTrackerUrl }
+            conventionMapping.pluginKey = { extension.pluginKey }
+            conventionMapping.pluginLicense = { extension.pluginLicense }
+            conventionMapping.pluginName = { extension.pluginName }
+            conventionMapping.organizationName = { extension.organization.name }
+            conventionMapping.organizationUrl = { extension.organization.url }
+            conventionMapping.pluginSourceUrl = { extension.pluginSourceUrl }
+            conventionMapping.pluginTermsConditionsUrl = { extension.pluginTermsConditionsUrl }
+            conventionMapping.useChildFirstClassLoader = { extension.useChildFirstClassLoader }
+            conventionMapping.pluginParent = { extension.pluginParent }
+            conventionMapping.requirePlugins = { extension.requirePlugins }
+            conventionMapping.basePlugin = { extension.basePlugin }
+            conventionMapping.skipDependenciesPackaging = { extension.skipDependenciesPackaging }
         }
 
         project.tasks.findByName('jar').finalizedBy 'pluginPackaging'

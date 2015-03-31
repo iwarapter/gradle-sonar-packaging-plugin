@@ -20,12 +20,60 @@ class PackagePluginTask extends Jar {
     //Pulling direct from the extension feels.... dirty
 
     @Input
-    boolean isSkipDependenciesPackaging
+    String pluginClass
+
+    @Input
+    String pluginDescription
+
+    @Input
+    String pluginDevelopers
+
+    @Input
+    String pluginUrl
+
+    @Input
+    String pluginIssueTrackerUrl
+
+    @Input
+    String pluginKey
+
+    @Input
+    String pluginLicense
+
+    @Input
+    String pluginName
+
+    @Input
+    String organizationName
+
+    @Input
+    String organizationUrl
+
+    @Input
+    String pluginSourceUrl
+
+    @Input
+    String pluginTermsConditionsUrl
+
+    @Input
+    Boolean useChildFirstClassLoader
+
+    @Input
+    String pluginParent
+
+    @Input
+    String requirePlugins
+
+    @Input
+    String basePlugin
+
+    @Input
+    boolean skipDependenciesPackaging
 
     @TaskAction
     protected void copy() {
         def query = new DependencyQuery(project)
-        if (!isSkipDependenciesPackaging) {
+        if (!skipDependenciesPackaging) {
             query.checkApiDependency()
             query.checkForDependencies(LOG_GROUP_IDS)
             query.checkForDependencies(GWT_ARTIFACT_IDS)
@@ -40,40 +88,40 @@ class PackagePluginTask extends Jar {
         manifest.addManifestProperty("Build-Jdk", System.getProperty('java.version'))
         manifest.addManifestProperty("Build-Time", new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"))
         manifest.addManifestProperty(PluginManifest.BUILD_DATE, new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"))
-        manifest.addManifestProperty(PluginManifest.MAIN_CLASS, extension.pluginClass)
-        manifest.addManifestProperty(PluginManifest.DESCRIPTION, extension.pluginDescription)
-        manifest.addManifestProperty(PluginManifest.DEVELOPERS, extension.pluginDevelopers)
-        manifest.addManifestProperty(PluginManifest.HOMEPAGE, extension.pluginUrl)
-        manifest.addManifestProperty(PluginManifest.ISSUE_TRACKER_URL, extension.pluginIssueTrackerUrl)
-        manifest.addManifestProperty(PluginManifest.KEY, extension.pluginKey)
-        manifest.addManifestProperty(PluginManifest.LICENSE, extension.pluginLicense)
-        manifest.addManifestProperty(PluginManifest.NAME, extension.pluginName)
-        manifest.addManifestProperty(PluginManifest.ORGANIZATION, extension.organization.name)
-        manifest.addManifestProperty(PluginManifest.ORGANIZATION_URL, extension.organization.url)
-        manifest.addManifestProperty(PluginManifest.SOURCES_URL, extension.pluginSourceUrl)
-        manifest.addManifestProperty(PluginManifest.TERMS_CONDITIONS_URL, extension.pluginTermsConditionsUrl)
+        manifest.addManifestProperty(PluginManifest.MAIN_CLASS, getPluginClass())
+        manifest.addManifestProperty(PluginManifest.DESCRIPTION, getPluginDescription())
+        manifest.addManifestProperty(PluginManifest.DEVELOPERS, getPluginDevelopers())
+        manifest.addManifestProperty(PluginManifest.HOMEPAGE, getPluginUrl())
+        manifest.addManifestProperty(PluginManifest.ISSUE_TRACKER_URL, getPluginIssueTrackerUrl())
+        manifest.addManifestProperty(PluginManifest.KEY, getPluginKey())
+        manifest.addManifestProperty(PluginManifest.LICENSE, getPluginLicense())
+        manifest.addManifestProperty(PluginManifest.NAME, getPluginName())
+        manifest.addManifestProperty(PluginManifest.ORGANIZATION, getOrganizationName())
+        manifest.addManifestProperty(PluginManifest.ORGANIZATION_URL, getOrganizationUrl())
+        manifest.addManifestProperty(PluginManifest.SOURCES_URL, getPluginSourceUrl())
+        manifest.addManifestProperty(PluginManifest.TERMS_CONDITIONS_URL, getPluginTermsConditionsUrl())
         manifest.addManifestProperty(PluginManifest.VERSION, project.version)
         manifest.addManifestProperty(PluginManifest.SONAR_VERSION, new DependencyQuery(project).sonarPluginApiArtifact.moduleVersion)
         if (extension.useChildFirstClassLoader){
-            manifest.addManifestProperty(PluginManifest.USE_CHILD_FIRST_CLASSLOADER, extension.useChildFirstClassLoader.toString())
+            manifest.addManifestProperty(PluginManifest.USE_CHILD_FIRST_CLASSLOADER, getUseChildFirstClassLoader().toString())
         }
 
         /**
          * If these extension points are null dont add to manifest
          */
-        if(extension.pluginParent) {
-            manifest.addManifestProperty(PluginManifest.PARENT, extension.pluginParent)
+        if(getPluginParent()) {
+            manifest.addManifestProperty(PluginManifest.PARENT, getPluginParent())
         }
-        if(extension.requirePlugins){
-            manifest.addManifestProperty(PluginManifest.REQUIRE_PLUGINS, extension.requirePlugins)
+        if(getRequirePlugins()){
+            manifest.addManifestProperty(PluginManifest.REQUIRE_PLUGINS, getRequirePlugins())
         }
-        if(extension.basePlugin){
-            manifest.addManifestProperty(PluginManifest.BASE_PLUGIN, extension.basePlugin)
+        if(getBasePlugin()){
+            manifest.addManifestProperty(PluginManifest.BASE_PLUGIN, getBasePlugin())
         }
 
         getLogger().info '-------------------------------------------------------'
 
-        if(!isSkipDependenciesPackaging) {
+        if(!skipDependenciesPackaging) {
 
             List<ResolvedDependency> dependencies = new DependencyQuery(project).getNotProvidedDependencies()
             from project.sourceSets.main.output
