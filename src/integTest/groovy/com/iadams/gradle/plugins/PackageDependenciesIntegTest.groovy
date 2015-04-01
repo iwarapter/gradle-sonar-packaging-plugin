@@ -17,7 +17,7 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
         setup:
         //forked for dependency resolution.
         fork = true
-        remoteDebug = true
+        //remoteDebug = true
         copyResources('build-with-sonar-dep.gradle', 'build.gradle')
 
         expect:
@@ -31,7 +31,7 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
         setup:
         //forked for dependency resolution.
         fork = true
-        remoteDebug = true
+        //remoteDebug = true
         copyResources('build-with-sonar-dep.gradle', 'build.gradle')
 
         expect:

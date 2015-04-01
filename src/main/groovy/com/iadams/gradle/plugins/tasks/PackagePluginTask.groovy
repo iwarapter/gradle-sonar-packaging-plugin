@@ -120,7 +120,14 @@ class PackagePluginTask extends Jar {
         if(!skipDependenciesPackaging) {
 
             List<ResolvedDependency> dependencies = new DependencyQuery(project).getNotProvidedDependencies()
-            manifest.addManifestProperty(PluginManifest.DEPENDENCIES, dependencies.collect{ "META-INF/lib/${it.moduleName}:${it.moduleVersion}.jar" }.join(' '))
+            manifest.attributes.put(PluginManifest.DEPENDENCIES, dependencies.collect{ "META-INF/lib/${it.moduleName}:${it.moduleVersion}.jar" }.join(' '))
+
+            if(dependencies.size()>0){
+                logger.info "Following dependencies are packaged in the plugin:\n"
+                dependencies.each{ logger.info "\t${it.moduleGroup}:${it.moduleName}:${it.moduleVersion}" }
+                logger.info "\nSee following page for more details about plugin dependencies:\n"
+                logger.info "\thttp://docs.codehaus.org/display/SONAR/Coding+a+plugin\n"
+            }
 
             from project.sourceSets.main.output
             into('META-INF/lib') {
