@@ -16,9 +16,6 @@ class PackagePluginTask extends Jar {
     private static final String[] GWT_ARTIFACT_IDS = ["gwt-user", "gwt-dev", "sonar-gwt-api"]
     private static final String[] LOG_GROUP_IDS = ["log4j", "commons-logging"]
 
-    //TODO Add all the plugin properties to the task.
-    //Pulling direct from the extension feels.... dirty
-
     @Input
     String pluginClass
 
@@ -79,7 +76,6 @@ class PackagePluginTask extends Jar {
             query.checkForDependencies(GWT_ARTIFACT_IDS)
         }
 
-        def extension = project.extensions.findByName(SonarPackagingPlugin.SONAR_PACKAGING_EXTENSION)
         getLogger().info "-------------------------------------------------------"
         getLogger().info "Plugin definition in update center"
         manifest = new PluginManifest()
@@ -102,7 +98,7 @@ class PackagePluginTask extends Jar {
         manifest.addManifestProperty(PluginManifest.TERMS_CONDITIONS_URL, getPluginTermsConditionsUrl())
         manifest.addManifestProperty(PluginManifest.VERSION, project.version)
         manifest.addManifestProperty(PluginManifest.SONAR_VERSION, new DependencyQuery(project).sonarPluginApiArtifact.moduleVersion)
-        if (extension.useChildFirstClassLoader){
+        if (getUseChildFirstClassLoader()){
             manifest.addManifestProperty(PluginManifest.USE_CHILD_FIRST_CLASSLOADER, getUseChildFirstClassLoader().toString())
         }
 
@@ -124,6 +120,8 @@ class PackagePluginTask extends Jar {
         if(!skipDependenciesPackaging) {
 
             List<ResolvedDependency> dependencies = new DependencyQuery(project).getNotProvidedDependencies()
+            manifest.addManifestProperty(PluginManifest.DEPENDENCIES, dependencies.collect{ "META-INF/lib/${it.moduleName}:${it.moduleVersion}.jar" }.join(' '))
+
             from project.sourceSets.main.output
             into('META-INF/lib') {
                 List<File> artifacts = []
@@ -132,7 +130,6 @@ class PackagePluginTask extends Jar {
                 }
                 from artifacts
             }
-            manifest.addManifestProperty(PluginManifest.DEPENDENCIES, dependencies.collect{ "META-INF/lib/${it.moduleName}:${it.moduleVersion}.jar" }.join(' '))
         }
 
         super.copy()
