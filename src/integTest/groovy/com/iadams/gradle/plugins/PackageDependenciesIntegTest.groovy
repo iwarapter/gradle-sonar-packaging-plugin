@@ -55,7 +55,7 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
         setup:
         //forked for dependency resolution.
         fork = true
-        remoteDebug = true
+        //remoteDebug = true
         copyResources('package-excluded-api-deps.gradle', 'build.gradle')
 
         expect:

@@ -65,7 +65,7 @@ class SonarPackagingPlugin implements Plugin<Project> {
             conventionMapping.skipDependenciesPackaging = { extension.skipDependenciesPackaging }
         }
 
-        project.tasks.findByName('jar').finalizedBy 'pluginPackaging'
+        project.tasks.findByName('build').finalizedBy 'pluginPackaging'
 
         project.task( SONAR_PLUGIN_LOCAL_DEPLOY_TASK, type: SonarPluginDeployTask) {
             description = 'Copies the built plugin to the local server.'

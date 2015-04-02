@@ -5,9 +5,10 @@ repositories {
 }
 
 dependencies {
+    compile project(':example-checks')
     compile 'org.codehaus.sonar:sonar-plugin-api:3.7'
     compile 'org.codehaus.sonar.sslr:sslr-core:1.20'
-    compile 'org.codehaus.sonar.sslr-squid-bridge:sslr-squid-bridge:2.5.3'
+    compile group: 'org.codehaus.sonar.sslr-squid-bridge', name: 'sslr-squid-bridge', version:'2.5.3'
 }
 
 version = '1.0'

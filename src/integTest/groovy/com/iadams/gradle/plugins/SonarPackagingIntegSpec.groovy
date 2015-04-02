@@ -73,16 +73,28 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
 
     def 'setup multi-project build'() {
         setup:
-        def sub1 = addSubproject('example-squid')
-        def sub2 = addSubproject('sonar-example-plugin')
-        fork = true
+        def squid = addSubproject('example-squid')
+        def checks = addSubproject('example-checks', '''dependencies{
+                                                            compile project(':example-squid')
+                                                        }''')
+        addSubproject('sonar-example-plugin')
+        copyResources('org/sonar/plugins/example/SamplePlugin.java', 'sonar-example-plugin/src/main/java/org/sonar/plugins/example/SamplePlugin.java')
+        buildFile << '''subprojects{
+                            apply plugin: 'java'
+                            version = '1.0'
+                        }'''
 
-        writeHelloWorld('com.example', sub1)
-        writeHelloWorld('com.example', sub2)
-        copyResources('build.gradle', 'sonar-example-plugin/build.gradle')
+        fork = true
+        remoteDebug = true
+
+        writeHelloWorld('com.example', squid)
+        writeHelloWorld('com.example', checks)
+        copyResources('multi-project-build.gradle', 'sonar-example-plugin/build.gradle')
 
         expect:
         runTasksSuccessfully('build')
         manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Description','An Example Plugin!')
+        dependencyExists('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'META-INF/lib/example-squid-1.0.jar')
+        dependencyExists('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'META-INF/lib/example-checks-1.0.jar')
     }
 }

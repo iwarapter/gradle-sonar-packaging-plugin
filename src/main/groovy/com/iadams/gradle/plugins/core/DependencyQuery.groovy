@@ -89,9 +89,9 @@ class DependencyQuery {
      */
     void getAllDependencies(ResolvedDependency dependency, String configuration, List<ResolvedDependency> result){
 
+        result.add(dependency)
         dependency.getChildren().each { child ->
-            if (child.getConfiguration() == configuration) {
-                result.add(child)
+            if (child.getConfiguration() == configuration || child.getConfiguration() == 'default') {
                 getAllDependencies(child, configuration, result)
             }
         }
@@ -134,7 +134,14 @@ class DependencyQuery {
     def getNotProvidedDependencies(){
         def result = []
         def providedArtifacts = getSonarProvidedArtifacts();
-        for (artifact in project.configurations.compile.resolvedConfiguration.getFirstLevelModuleDependencies()) {
+
+        def allDeps = []
+        project.configurations.compile.resolvedConfiguration.firstLevelModuleDependencies.each{
+            getAllDependencies(it, 'compile', allDeps)
+        }
+        allDeps.unique()
+
+        for (artifact in allDeps) {
             boolean include = true;
             if (isSonarPlugin(artifact.module.id.toString())) {
                 project.logger.warn("${artifact.module.id.toString()} is a SonarQube plugin and will not be packaged in your plugin");
