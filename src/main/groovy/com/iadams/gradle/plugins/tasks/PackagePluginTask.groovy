@@ -4,6 +4,7 @@ import com.iadams.gradle.plugins.SonarPackagingPlugin
 import com.iadams.gradle.plugins.core.DependencyQuery
 import com.iadams.gradle.plugins.core.PluginManifest
 import org.gradle.api.artifacts.ResolvedDependency
+import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.bundling.Jar
@@ -69,6 +70,8 @@ class PackagePluginTask extends Jar {
 
     @TaskAction
     protected void copy() {
+        logging.level = LogLevel.INFO
+
         def query = new DependencyQuery(project)
         if (!skipDependenciesPackaging) {
             query.checkApiDependency()
@@ -76,8 +79,8 @@ class PackagePluginTask extends Jar {
             query.checkForDependencies(GWT_ARTIFACT_IDS)
         }
 
-        getLogger().info "-------------------------------------------------------"
-        getLogger().info "Plugin definition in update center"
+        logger.info "-------------------------------------------------------"
+        logger.info "Plugin definition in update center"
         manifest = new PluginManifest()
         manifest.addManifestProperty("Created-By", "Gradle")
         manifest.addManifestProperty("Built-By", System.getProperty('user.name'))
@@ -141,5 +144,7 @@ class PackagePluginTask extends Jar {
 
         super.copy()
         getLogger().info('Sonar Plugin Created.')
+
+        logging.level = LogLevel.LIFECYCLE
     }
 }

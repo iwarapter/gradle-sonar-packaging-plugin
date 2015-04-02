@@ -51,6 +51,18 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
         dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/commons-email-1.2.jar")
     }
 
+    def "package dependencies excluded from api"(){
+        setup:
+        //forked for dependency resolution.
+        fork = true
+        remoteDebug = true
+        copyResources('package-excluded-api-deps.gradle', 'build.gradle')
+
+        expect:
+        runTasksSuccessfully('build')
+        dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/plexus-utils-1.5.6.jar")
+    }
+
     def "build without api in compile fails"(){
         setup:
         file('src/main/java/org/sonar/plugins/example/SamplePlugin.java').delete()
