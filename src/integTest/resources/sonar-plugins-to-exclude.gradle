@@ -7,7 +7,6 @@ repositories {
 dependencies {
     compile 'org.codehaus.sonar:sonar-plugin-api:4.5.2'
     compile 'org.codehaus.sonar:sonar-squid:3.7'
-    compile 'commons-lang:commons-lang:2.6'
 }
 
 version = '1.0'

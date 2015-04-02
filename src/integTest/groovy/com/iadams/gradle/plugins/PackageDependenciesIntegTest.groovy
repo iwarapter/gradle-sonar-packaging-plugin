@@ -13,18 +13,17 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
         settingsFile << '''rootProject.name="example"'''
     }
 
-    def "dependencies by sonar are not packaged"() {
+    def "provided dependencies are NOT packaged"() {
         setup:
         //forked for dependency resolution.
         fork = true
         //remoteDebug = true
-        copyResources('build-with-sonar-dep.gradle', 'build.gradle')
+        copyResources('deps-to-exclude.gradle', 'build.gradle')
 
         expect:
         runTasksSuccessfully('build')
-        dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/commons-lang-2.6.jar")
-        !dependencyExists('build/libs/example-1.0.jar', 'META-INF/lib/sonar-plugin-api-4.5.2.jar')
-        !dependencyExists('build/libs/example-1.0.jar', 'META-INF/lib/sonar-squid-3.7.jar')
+        !dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/commons-lang-2.5.jar")
+        !dependencyExists('build/libs/example-1.0.jar', 'META-INF/lib/sonar-plugin-api-2.4.jar')
     }
 
     def "sonar plugins are not packaged"() {
@@ -32,14 +31,24 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
         //forked for dependency resolution.
         fork = true
         //remoteDebug = true
-        copyResources('build-with-sonar-dep.gradle', 'build.gradle')
+        copyResources('build-with-sonar-plugin.gradle', 'build.gradle')
 
         expect:
         ExecutionResult result = runTasksSuccessfully('build')
-        println result.standardOutput
-        println result.standardError
-        dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/commons-lang-2.6.jar")
+        !dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/commons-lang-2.5.jar")
         !dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/sonar-surefire-plugin-2.4.jar")
+    }
+
+    def "package dependencies NOT provided by sonar"(){
+        setup:
+        //forked for dependency resolution.
+        fork = true
+        //remoteDebug = true
+        copyResources('should-be-packaged.gradle', 'build.gradle')
+
+        expect:
+        runTasksSuccessfully('build')
+        dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/commons-email-1.2.jar")
     }
 
     def "build without api in compile fails"(){

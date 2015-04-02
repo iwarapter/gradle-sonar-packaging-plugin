@@ -128,7 +128,7 @@ class DependencyQuery {
         project.configurations.compile.resolvedConfiguration.getFirstLevelModuleDependencies().each{
             searchForSonarProvidedArtifacts(it, myList, false)
         }
-        return myList
+        return myList.unique()
     }
 
     def getNotProvidedDependencies(){
@@ -152,7 +152,7 @@ class DependencyQuery {
     }
 
     void searchForSonarProvidedArtifacts(ResolvedDependency dependency, def sonarArtifacts, boolean isParentProvided){
-        if(dependency != null && dependency.configuration.toString().equals('default')) {
+        if(dependency != null) {
             boolean provided
             if(dependency.getParents().findAll{ it.configuration.equals('compile')} != null){
                 provided = isParentProvided || ("org.codehaus.sonar".equals(dependency.moduleGroup))

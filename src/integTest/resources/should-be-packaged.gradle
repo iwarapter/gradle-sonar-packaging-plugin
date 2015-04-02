@@ -6,7 +6,7 @@ repositories {
 
 dependencies {
     compile 'org.codehaus.sonar:sonar-plugin-api:2.4'
-    compile 'org.codehaus.sonar.plugins:sonar-surefire-plugin:2.4'
+    compile 'org.apache.commons:commons-email:1.2'
 }
 
 version = '1.0'
