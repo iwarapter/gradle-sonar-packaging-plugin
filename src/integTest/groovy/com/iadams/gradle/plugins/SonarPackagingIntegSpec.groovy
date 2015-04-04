@@ -97,4 +97,21 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
         dependencyExists('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'META-INF/lib/example-squid-1.0.jar')
         dependencyExists('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'META-INF/lib/example-checks-1.0.jar')
     }
+
+    def "invalid pluginKey causes failure"(){
+        setup:
+        buildFile << """apply plugin: 'com.iadams.sonar-packaging'
+
+                        sonarpackaging {
+                            pluginKey = 'key-with.bad%characters'
+                            pluginClass = ' org.sonar.plugins.example.SamplePlugin'
+                            pluginDescription = 'Sample Plugin!'
+                        }"""
+
+        when:
+        ExecutionResult result = runTasksWithFailure('build')
+
+        then:
+        result.standardError.contains('Plugin key is badly formatted. Please use ascii letters and digits only: ')
+    }
 }

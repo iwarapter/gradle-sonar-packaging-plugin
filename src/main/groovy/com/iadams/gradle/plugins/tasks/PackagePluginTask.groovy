@@ -2,7 +2,9 @@ package com.iadams.gradle.plugins.tasks
 
 import com.iadams.gradle.plugins.SonarPackagingPlugin
 import com.iadams.gradle.plugins.core.DependencyQuery
+import com.iadams.gradle.plugins.core.PluginKeyUtils
 import com.iadams.gradle.plugins.core.PluginManifest
+import org.gradle.api.GradleException
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Input
@@ -71,6 +73,8 @@ class PackagePluginTask extends Jar {
     @TaskAction
     protected void copy() {
         logging.level = LogLevel.INFO
+
+        checkMandatoryAttributes()
 
         def query = new DependencyQuery(project)
         if (!skipDependenciesPackaging) {
@@ -146,5 +150,18 @@ class PackagePluginTask extends Jar {
         getLogger().info('Sonar Plugin Created.')
 
         logging.level = LogLevel.LIFECYCLE
+    }
+
+    /**
+     *
+     */
+    private void checkMandatoryAttributes(){
+        checkPluginKey()
+    }
+
+    private void checkPluginKey() throws GradleException {
+        if (!getPluginKey().isEmpty() && !PluginKeyUtils.isValid(getPluginKey())) {
+            throw new GradleException("Plugin key is badly formatted. Please use ascii letters and digits only: " + getPluginKey());
+        }
     }
 }
