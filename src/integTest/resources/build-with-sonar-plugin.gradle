@@ -15,7 +15,7 @@ version = '1.0'
 sonarpackaging {
     pluginDir = "$buildDir/myServer"
     pluginKey = 'example'
-    pluginClass = 'org.sonar.plugins.example.SamplePlugin.java'
+    pluginClass = 'org.sonar.plugins.sample.SamplePlugin'
     pluginName = 'Example'
     pluginDescription = 'An Example Plugin!'
 }

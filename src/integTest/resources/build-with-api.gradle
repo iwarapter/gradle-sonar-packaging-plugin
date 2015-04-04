@@ -11,7 +11,7 @@ dependencies {
 sonarpackaging {
     pluginDir = "$buildDir/myServer"
     pluginKey = 'example'
-    pluginClass = 'com.example.HelloWorld'
+    pluginClass = 'org.sonar.plugins.sample.SamplePlugin'
     pluginName = 'Example'
     pluginDescription = 'An Example Plugin!'
 }

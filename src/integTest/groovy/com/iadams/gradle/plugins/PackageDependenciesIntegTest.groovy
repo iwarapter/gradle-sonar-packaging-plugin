@@ -9,7 +9,7 @@ import nebula.test.functional.ExecutionResult
 class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
 
     def setup(){
-        copyResources('org/sonar/plugins/example/SamplePlugin.java', 'src/main/java/org/sonar/plugins/example/SamplePlugin.java')
+        copyResources('org/sonar/plugins/sample/SamplePlugin.java', 'src/main/java/org/sonar/plugins/sample/SamplePlugin.java')
         settingsFile << '''rootProject.name="example"'''
     }
 
@@ -78,7 +78,8 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
 
     def "build without api in compile fails"(){
         setup:
-        file('src/main/java/org/sonar/plugins/example/SamplePlugin.java').delete()
+        file('src/main/java/org/sonar/plugins/sample/SamplePlugin.java').delete()
+        writeHelloWorld('com.example')
         copyResources('build-without-api.gradle', 'build.gradle')
 
         when:

@@ -78,7 +78,7 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
                                                             compile project(':example-squid')
                                                         }''')
         addSubproject('sonar-example-plugin')
-        copyResources('org/sonar/plugins/example/SamplePlugin.java', 'sonar-example-plugin/src/main/java/org/sonar/plugins/example/SamplePlugin.java')
+        copyResources('org/sonar/plugins/sample/SamplePlugin.java', 'sonar-example-plugin/src/main/java/org/sonar/plugins/sample/SamplePlugin.java')
         buildFile << '''subprojects{
                             apply plugin: 'java'
                             version = '1.0'

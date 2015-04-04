@@ -105,13 +105,13 @@ class PackagePluginTask extends Jar {
         manifest.addManifestProperty(PluginManifest.TERMS_CONDITIONS_URL, getPluginTermsConditionsUrl())
         manifest.addManifestProperty(PluginManifest.VERSION, project.version)
         manifest.addManifestProperty(PluginManifest.SONAR_VERSION, new DependencyQuery(project).sonarPluginApiArtifact.moduleVersion)
-        if (getUseChildFirstClassLoader()){
-            manifest.addManifestProperty(PluginManifest.USE_CHILD_FIRST_CLASSLOADER, getUseChildFirstClassLoader().toString())
-        }
 
         /**
          * If these extension points are null dont add to manifest
          */
+        if (getUseChildFirstClassLoader()){
+            manifest.addManifestProperty(PluginManifest.USE_CHILD_FIRST_CLASSLOADER, getUseChildFirstClassLoader().toString())
+        }
         if(getPluginParent()) {
             manifest.addManifestProperty(PluginManifest.PARENT, getPluginParent())
         }
@@ -153,15 +153,22 @@ class PackagePluginTask extends Jar {
     }
 
     /**
-     *
+     * Checks basic properties are valid, before packaging.
      */
     private void checkMandatoryAttributes(){
         checkPluginKey()
+        checkPluginClass()
     }
 
     private void checkPluginKey() throws GradleException {
         if (!getPluginKey().isEmpty() && !PluginKeyUtils.isValid(getPluginKey())) {
             throw new GradleException("Plugin key is badly formatted. Please use ascii letters and digits only: " + getPluginKey());
+        }
+    }
+
+    private void checkPluginClass() throws GradleException {
+        if(!new File(project.sourceSets.main.output.classesDir, getPluginClass().replace('.', '/') + ".class").exists()){
+            throw new GradleException("Plugin class not found: " + getPluginClass())
         }
     }
 }
