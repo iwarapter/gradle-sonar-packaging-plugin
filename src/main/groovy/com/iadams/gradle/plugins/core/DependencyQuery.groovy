@@ -43,7 +43,7 @@ class DependencyQuery {
 
         if (sonarApi == null) {
             throw new GradleException(
-                    "$SONAR_GROUPID:$SONAR_PLUGIN_API_ARTIFACTID should be declared in dependencies");
+                    "$SONAR_GROUPID:$SONAR_PLUGIN_API_ARTIFACTID should be declared in dependencies")
         }
     }
 
@@ -142,20 +142,20 @@ class DependencyQuery {
         allDeps.unique()
 
         for (artifact in allDeps) {
-            boolean include = true;
+            boolean include = true
             if (isSonarPlugin(artifact.module.id.toString())) {
-                project.logger.warn("${artifact.module.id.toString()} is a SonarQube plugin and will not be packaged in your plugin");
-                include = false;
+                project.logger.warn("${artifact.module.id.toString()} is a SonarQube plugin and will not be packaged in your plugin")
+                include = false
             }
             if (providedArtifacts.contains(artifact.getModule().id)) {
-                project.logger.warn(artifact.name + " is provided by SonarQube plugin API and will not be packaged in your plugin");
-                include = false;
+                project.logger.warn(artifact.name + " is provided by SonarQube plugin API and will not be packaged in your plugin")
+                include = false
             }
             if (include) {
-                result.add(artifact);
+                result.add(artifact)
             }
         }
-        return result;
+        return result
     }
 
     void searchForSonarProvidedArtifacts(ResolvedDependency dependency, def sonarArtifacts, boolean isParentProvided){

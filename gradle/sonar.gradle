@@ -4,10 +4,6 @@ sonarRunner {
     sonarProperties {
         property "sonar.host.url", "http://localhost:9000"
 
-        property "sonar.jdbc.url", "jdbc:h2:tcp://localhost:9092/sonar"
-        property "sonar.jdbc.username", "sonar"
-        property "sonar.jdbc.password", "sonar"
-
         property "sonar.login", "admin"
         property "sonar.password", "admin"
 

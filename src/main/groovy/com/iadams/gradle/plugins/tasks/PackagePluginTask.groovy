@@ -1,6 +1,5 @@
 package com.iadams.gradle.plugins.tasks
 
-import com.iadams.gradle.plugins.SonarPackagingPlugin
 import com.iadams.gradle.plugins.core.DependencyQuery
 import com.iadams.gradle.plugins.core.PluginKeyUtils
 import com.iadams.gradle.plugins.core.PluginManifest

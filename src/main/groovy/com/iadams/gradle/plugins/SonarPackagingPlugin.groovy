@@ -17,6 +17,7 @@ class SonarPackagingPlugin implements Plugin<Project> {
     static final SONAR_PACKAGING_GROUP = 'Sonar Packaging'
     static final SONAR_PACKAGING_EXTENSION = 'sonarpackaging'
     static final SONAR_PACKAGING_ORGANIZATION_EXTENSION = 'organization'
+    static final SONAR_PACKAGING_TASK = 'pluginPackaging'
     static final SONAR_PLUGIN_LOCAL_DEPLOY_TASK = 'localDeploy'
     static final SONAR_API_RESTART_TASK = 'restartServer'
 
@@ -42,7 +43,7 @@ class SonarPackagingPlugin implements Plugin<Project> {
     void addTasks(Project project){
         def extension = project.extensions.findByName(SONAR_PACKAGING_EXTENSION)
 
-        project.task( 'pluginPackaging', type: PackagePluginTask) {
+        project.task( SONAR_PACKAGING_TASK , type: PackagePluginTask) {
             description = 'Updates the Jar file with the correct dependencies and manifest info.'
             group = SONAR_PACKAGING_GROUP
 
@@ -65,7 +66,7 @@ class SonarPackagingPlugin implements Plugin<Project> {
             conventionMapping.skipDependenciesPackaging = { extension.skipDependenciesPackaging }
         }
 
-        project.tasks.findByName('build').finalizedBy 'pluginPackaging'
+        project.tasks.findByName('build').finalizedBy SONAR_PACKAGING_TASK
 
         project.task( SONAR_PLUGIN_LOCAL_DEPLOY_TASK, type: SonarPluginDeployTask) {
             description = 'Copies the built plugin to the local server.'
