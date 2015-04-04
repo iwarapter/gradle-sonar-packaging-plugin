@@ -13,7 +13,7 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
         settingsFile << '''rootProject.name="example"'''
     }
 
-    def "provided dependencies are NOT packaged"() {
+    def "sonar provided dependencies are NOT packaged"() {
         setup:
         //forked for dependency resolution.
         fork = true
@@ -50,6 +50,19 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
         runTasksSuccessfully('build')
         dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/commons-email-1.2.jar")
     }
+
+    def "provided scope dependencies should NOT be packaged"(){
+        setup:
+        //forked for dependency resolution.
+        fork = true
+        //remoteDebug = true
+        copyResources('provided-should-not-be-packaged.gradle', 'build.gradle')
+
+        expect:
+        runTasksSuccessfully('build')
+        !dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/commons-email-1.2.jar")
+    }
+
 
     def "package dependencies excluded from api"(){
         setup:

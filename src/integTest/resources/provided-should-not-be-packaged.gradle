@@ -1,0 +1,21 @@
+apply plugin: 'com.iadams.sonar-packaging'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.codehaus.sonar:sonar-plugin-api:2.4'
+    provided 'org.apache.commons:commons-email:1.2'
+}
+
+version = '1.0'
+
+
+sonarpackaging {
+    pluginDir = "$buildDir/myServer"
+    pluginKey = 'example'
+    pluginClass = 'org.sonar.plugins.example.SamplePlugin.java'
+    pluginName = 'Example'
+    pluginDescription = 'An Example Plugin!'
+}
