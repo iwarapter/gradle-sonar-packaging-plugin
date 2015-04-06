@@ -102,18 +102,32 @@ class DependencyQuery {
     }
 
     /**
+     * Get a list of all dependencies (recursive) in the given configuration.
+     *
+     * @param configuration
+     * @return
+     */
+    List<ResolvedDependency> getAllDependencies(String configuration){
+        List<ResolvedDependency> allDeps = []
+        project.configurations.getByName(configuration).resolvedConfiguration.firstLevelModuleDependencies.each{
+            retrieveDependencies(it, configuration, allDeps)
+        }
+        return allDeps.unique()
+    }
+
+    /**
      * For each dependency, add all children in the given configuration (recursively)
      *
      * @param dependency
      * @param configuration
      * @param result
      */
-    void getAllDependencies(ResolvedDependency dependency, String configuration, List<ResolvedDependency> result){
+    void retrieveDependencies(ResolvedDependency dependency, String configuration, List<ResolvedDependency> result){
 
         result.add(dependency)
         dependency.getChildren().each { child ->
             if (child.getConfiguration() == configuration || child.getConfiguration() == 'default') {
-                getAllDependencies(child, configuration, result)
+                retrieveDependencies(child, configuration, result)
             }
         }
     }
@@ -144,8 +158,13 @@ class DependencyQuery {
         return false
     }
 
-    def getSonarProvidedArtifacts(){
-        def myList = []
+    /**
+     * Return a list of all the artifacts provided by Sonar.
+     *
+     * @return
+     */
+    List<ResolvedDependency> getSonarProvidedArtifacts(){
+        List<ResolvedDependency> myList = []
         project.configurations.provided.resolvedConfiguration.getFirstLevelModuleDependencies().each{
             searchForSonarProvidedArtifacts(it, myList, false)
         }
@@ -155,28 +174,28 @@ class DependencyQuery {
         return myList.unique()
     }
 
-    def getNotProvidedDependencies(){
-        def result = []
+    /**
+     * Get a list of all dependencies not provided by Soanr.
+     * @return
+     */
+    List<ResolvedDependency> getNotProvidedDependencies(){
+        List<ResolvedDependency> result = []
         def providedArtifacts = getSonarProvidedArtifacts();
 
-        def allDeps = []
-        project.configurations.compile.resolvedConfiguration.firstLevelModuleDependencies.each{
-            getAllDependencies(it, 'compile', allDeps)
-        }
-        allDeps.unique()
+        def allDeps = getAllDependencies('compile')
 
-        for (artifact in allDeps) {
+        for (dep in allDeps) {
             boolean include = true
-            if (isSonarPlugin(artifact.module.id.toString())) {
-                project.logger.warn("${artifact.module.id.toString()} is a SonarQube plugin and will not be packaged in your plugin")
+            if (isSonarPlugin(dep.module.id.toString())) {
+                project.logger.warn("${dep.module.id.toString()} is a SonarQube plugin and will not be packaged in your plugin")
                 include = false
             }
-            if (providedArtifacts.contains(artifact.getModule().id)) {
-                project.logger.warn(artifact.name + " is provided by SonarQube plugin API and will not be packaged in your plugin")
+            if (containsDependency(providedArtifacts, dep)) {
+                project.logger.warn(dep.name + " is provided by SonarQube plugin API and will not be packaged in your plugin")
                 include = false
             }
             if (include) {
-                result.add(artifact)
+                result.add(dep)
             }
         }
         return result
@@ -192,7 +211,7 @@ class DependencyQuery {
                 provided = isParentProvided
             }
             if (provided) {
-                sonarArtifacts.add(dependency.module.id)
+                sonarArtifacts.add(dependency)
             }
 
             for (child in dependency.getChildren()) {
@@ -201,5 +220,21 @@ class DependencyQuery {
                 }
             }
         }
+    }
+
+    /**
+     * Check a given list of dependencies for the presence of one, by comparing group, name, version.
+     *
+     * @param list
+     * @param dep
+     * @return
+     */
+    private boolean containsDependency(List<ResolvedDependency> list, ResolvedDependency dep){
+        for(it in list){
+            if(it.moduleGroup == dep.moduleGroup &&
+                it.moduleName == dep.moduleName &&
+                it.moduleVersion == dep.moduleVersion){return true}
+        }
+        return false
     }
 }
