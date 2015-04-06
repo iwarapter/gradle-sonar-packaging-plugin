@@ -38,6 +38,6 @@ final class PluginManifest extends DefaultManifest {
 
     void addManifestProperty(String key, String value) {
         attributes.put(key, value)
-        log.info "    $key:$value"
+        log.info "    $key: $value"
     }
 }

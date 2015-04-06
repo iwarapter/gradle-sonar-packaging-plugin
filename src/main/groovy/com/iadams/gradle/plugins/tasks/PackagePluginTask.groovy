@@ -81,7 +81,7 @@ class PackagePluginTask extends Jar {
         checkMandatoryAttributes()
 
         def query = new DependencyQuery(project)
-        if (!skipDependenciesPackaging) {
+        if (!getSkipDependenciesPackaging()) {
             query.checkApiDependency()
             query.checkForDependencies(LOG_GROUP_IDS)
             query.checkForDependencies(GWT_ARTIFACT_IDS)
@@ -130,7 +130,7 @@ class PackagePluginTask extends Jar {
 
         checkParentAndRequiresPluginProperties()
 
-        if(!skipDependenciesPackaging) {
+        if(!getSkipDependenciesPackaging()) {
 
             List<ResolvedDependency> dependencies = new DependencyQuery(project).getNotProvidedDependencies()
             manifest.attributes.put(PluginManifest.DEPENDENCIES, dependencies.collect{ "META-INF/lib/${it.moduleName}:${it.moduleVersion}.jar" }.join(' '))
