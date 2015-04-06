@@ -85,7 +85,6 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
                         }'''
 
         fork = true
-        remoteDebug = true
 
         writeHelloWorld('com.example', squid)
         writeHelloWorld('com.example', checks)
