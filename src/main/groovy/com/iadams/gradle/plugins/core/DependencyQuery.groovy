@@ -9,6 +9,7 @@ import org.gradle.maven.MavenPomArtifact
 /**
  * Created by iwarapter
  */
+//TODO Refactor this class
 class DependencyQuery {
 
     Project project
@@ -21,13 +22,13 @@ class DependencyQuery {
     public static final String SONAR_PLUGIN_API_ARTIFACTID = "sonar-plugin-api"
     public static final String SONAR_PLUGIN_API_TYPE = "jar"
 
-    Set<ResolvedDependency> getDependencyArtifacts(){
-        project.configurations.compile.resolvedConfiguration.firstLevelModuleDependencies
+    Set<ResolvedDependency> getDependencyArtifacts(String configuration){
+        project.configurations.findByName(configuration).resolvedConfiguration.firstLevelModuleDependencies
     }
 
     final ResolvedDependency getSonarPluginApiArtifact() {
 
-        for(ResolvedDependency it : getDependencyArtifacts()) {
+        for(ResolvedDependency it : getDependencyArtifacts('provided')) {
             if (SONAR_GROUPID.equals(it.moduleGroup) && SONAR_PLUGIN_API_ARTIFACTID.equals(it.moduleName)
                     && SONAR_PLUGIN_API_TYPE.equals(it.moduleArtifacts[0].type)) {
                 return it
@@ -49,7 +50,7 @@ class DependencyQuery {
 
     void checkForDependencies(String[] group){
         def ids = []
-        getDependencyArtifacts().each{
+        getDependencyArtifacts('compile').each{
             if(group.contains(it.moduleName)) {
                 ids.add( it.moduleName )
             }
@@ -125,6 +126,9 @@ class DependencyQuery {
 
     def getSonarProvidedArtifacts(){
         def myList = []
+        project.configurations.provided.resolvedConfiguration.getFirstLevelModuleDependencies().each{
+            searchForSonarProvidedArtifacts(it, myList, false)
+        }
         project.configurations.compile.resolvedConfiguration.getFirstLevelModuleDependencies().each{
             searchForSonarProvidedArtifacts(it, myList, false)
         }

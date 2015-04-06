@@ -5,7 +5,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.codehaus.sonar:sonar-plugin-api:4.5.2'
+    provided 'org.codehaus.sonar:sonar-plugin-api:4.5.2'
     compile 'org.codehaus.sonar:sonar-squid:3.7'
 }
 

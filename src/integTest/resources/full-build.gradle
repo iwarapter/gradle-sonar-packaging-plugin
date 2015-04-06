@@ -7,7 +7,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.codehaus.sonar:sonar-plugin-api:4.5.2'
+    provided 'org.codehaus.sonar:sonar-plugin-api:4.5.2'
     compile 'org.codehaus.sonar:sonar-deprecated:4.5.2'
     compile 'org.codehaus.sonar:sonar-testing-harness:4.5.2'
     compile 'org.codehaus.sonar.sslr:sslr-core:1.20'

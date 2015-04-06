@@ -5,7 +5,7 @@ repositories {
 }
 
 dependencies {
-    compile 'org.codehaus.sonar:sonar-plugin-api:2.4'
+    provided 'org.codehaus.sonar:sonar-plugin-api:2.4'
     compile 'commons-lang:commons-lang:2.5'
 }
 

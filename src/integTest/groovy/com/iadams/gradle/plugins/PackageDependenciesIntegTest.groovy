@@ -89,16 +89,20 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
         result.standardError.contains("org.codehaus.sonar:sonar-plugin-api should be declared in dependencies")
     }
 
+    def "build with api in provided scope passes"(){
+        given:
+        copyResources('api-in-provided-scope.gradle', 'build.gradle')
+
+        expect:
+        runTasksSuccessfully('build')
+    }
+
     def "build with api passes"(){
-        setup:
+        given:
         copyResources('build-with-api.gradle', 'build.gradle')
-        fork = true
 
-        when:
-        ExecutionResult result = runTasksSuccessfully('build')
-
-        then:
-        result.success
+        expect:
+        runTasksSuccessfully('build')
     }
 
     def "build with logging deps logs warnings"(){
