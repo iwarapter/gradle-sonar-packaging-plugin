@@ -4,7 +4,7 @@ apply plugin: 'maven'
 apply from: "$rootDir/gradle/jacoco.gradle"
 apply from: "$rootDir/gradle/sonar.gradle"
 
-group = 'com.iadams.gradle.plugins'
+group = 'com.iadams.plugins'
 version = '0.1-SNAPSHOT'
 
 description = 'Gradle plugin for packaging SonarQube plugins.'

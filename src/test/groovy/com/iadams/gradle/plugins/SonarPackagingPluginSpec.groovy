@@ -7,7 +7,7 @@ import nebula.test.PluginProjectSpec
  */
 class SonarPackagingPluginSpec extends PluginProjectSpec {
 
-    static final String PLUGIN_ID = 'com.iadams.sonarPackaging'
+    static final String PLUGIN_ID = 'com.iadams.sonar-packaging'
 
     @Override
     String getPluginName() {

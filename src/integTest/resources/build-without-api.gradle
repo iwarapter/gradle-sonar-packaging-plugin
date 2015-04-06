@@ -1,4 +1,4 @@
-apply plugin: 'com.iadams.sonarPackaging'
+apply plugin: 'com.iadams.sonar-packaging'
 
 version = '1.0'
 
