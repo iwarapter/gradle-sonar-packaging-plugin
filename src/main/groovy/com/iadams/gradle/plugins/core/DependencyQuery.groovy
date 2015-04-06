@@ -9,7 +9,6 @@ import org.gradle.maven.MavenPomArtifact
 /**
  * Created by iwarapter
  */
-//TODO Refactor this class
 class DependencyQuery {
 
     Project project
@@ -27,7 +26,7 @@ class DependencyQuery {
      * @param configuration
      * @return
      */
-    Set<ResolvedDependency> getDependencyArtifacts(String configuration){
+    Set<ResolvedDependency> getDependencies(String configuration){
         project.configurations.findByName(configuration).resolvedConfiguration.firstLevelModuleDependencies
     }
 
@@ -38,7 +37,7 @@ class DependencyQuery {
      */
     final ResolvedDependency getSonarPluginApiArtifact() {
 
-        for(ResolvedDependency it : getDependencyArtifacts('provided')) {
+        for(ResolvedDependency it : getDependencies('provided')) {
             if (SONAR_GROUPID.equals(it.moduleGroup) && SONAR_PLUGIN_API_ARTIFACTID.equals(it.moduleName)
                     && SONAR_PLUGIN_API_TYPE.equals(it.moduleArtifacts[0].type)) {
                 return it
@@ -70,7 +69,7 @@ class DependencyQuery {
      */
     void checkForDependencies(String[] artifactIds){
         List<String> ids = []
-        getDependencyArtifacts('compile').each{
+        getDependencies('compile').each{
             if(artifactIds.contains(it.moduleName)) {
                 ids.add( it.moduleName )
             }
@@ -166,10 +165,10 @@ class DependencyQuery {
     List<ResolvedDependency> getSonarProvidedArtifacts(){
         List<ResolvedDependency> myList = []
         project.configurations.provided.resolvedConfiguration.getFirstLevelModuleDependencies().each{
-            searchForSonarProvidedArtifacts(it, myList, false)
+            searchForSonarProvidedDependencies(it, myList, false)
         }
         project.configurations.compile.resolvedConfiguration.getFirstLevelModuleDependencies().each{
-            searchForSonarProvidedArtifacts(it, myList, false)
+            searchForSonarProvidedDependencies(it, myList, false)
         }
         return myList.unique()
     }
@@ -180,9 +179,9 @@ class DependencyQuery {
      */
     List<ResolvedDependency> getNotProvidedDependencies(){
         List<ResolvedDependency> result = []
-        def providedArtifacts = getSonarProvidedArtifacts();
+        List<ResolvedDependency> providedArtifacts = getSonarProvidedArtifacts();
 
-        def allDeps = getAllDependencies('compile')
+        List<ResolvedDependency> allDeps = getAllDependencies('compile')
 
         for (dep in allDeps) {
             boolean include = true
@@ -201,7 +200,15 @@ class DependencyQuery {
         return result
     }
 
-    void searchForSonarProvidedArtifacts(ResolvedDependency dependency, def sonarArtifacts, boolean isParentProvided){
+    /**
+     * Searches the dependency tree adding any dependency matching 'org.codehaus.sonar'
+     * and all its children to the sonarDeps list.
+     *
+     * @param dependency
+     * @param sonarDeps
+     * @param isParentProvided
+     */
+    void searchForSonarProvidedDependencies(ResolvedDependency dependency, List<ResolvedDependency> sonarDeps, boolean isParentProvided){
         if(dependency != null) {
             boolean provided
             if(dependency.getParents().findAll{ it.configuration.equals('compile')} != null){
@@ -211,12 +218,12 @@ class DependencyQuery {
                 provided = isParentProvided
             }
             if (provided) {
-                sonarArtifacts.add(dependency)
+                sonarDeps.add(dependency)
             }
 
             for (child in dependency.getChildren()) {
                 if (child.getConfiguration().equals('compile')) {
-                    searchForSonarProvidedArtifacts(child, sonarArtifacts, provided)
+                    searchForSonarProvidedDependencies(child, sonarDeps, provided)
                 }
             }
         }
