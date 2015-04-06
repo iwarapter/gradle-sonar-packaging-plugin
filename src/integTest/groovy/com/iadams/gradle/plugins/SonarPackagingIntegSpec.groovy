@@ -100,9 +100,9 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
 
     def "invalid pluginKey causes failure"(){
         setup:
-        buildFile << """apply plugin: 'com.iadams.sonar-packaging'
+        buildFile << """apply plugin: 'com.iadams.sonarPackaging'
 
-                        sonarpackaging {
+                        sonarPackaging {
                             pluginKey = 'key-with.bad%characters'
                             pluginClass = ' org.sonar.plugins.example.SamplePlugin'
                             pluginDescription = 'Sample Plugin!'

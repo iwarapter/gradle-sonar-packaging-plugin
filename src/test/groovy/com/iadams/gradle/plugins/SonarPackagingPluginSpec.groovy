@@ -7,7 +7,7 @@ import nebula.test.PluginProjectSpec
  */
 class SonarPackagingPluginSpec extends PluginProjectSpec {
 
-    static final String PLUGIN_ID = 'com.iadams.sonar-packaging'
+    static final String PLUGIN_ID = 'com.iadams.sonarPackaging'
 
     @Override
     String getPluginName() {
@@ -18,7 +18,7 @@ class SonarPackagingPluginSpec extends PluginProjectSpec {
         project.apply plugin: pluginName
     }
 
-    def "apply creates sonar-packaging extension" () {
-        expect: project.extensions.findByName('sonarpackaging')
+    def "apply creates sonarPackaging extension" () {
+        expect: project.extensions.findByName('sonarPackaging')
     }
 }

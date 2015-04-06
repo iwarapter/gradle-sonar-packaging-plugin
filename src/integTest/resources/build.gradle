@@ -1,4 +1,4 @@
-apply plugin: 'com.iadams.sonar-packaging'
+apply plugin: 'com.iadams.sonarPackaging'
 
 repositories {
     mavenCentral()
@@ -12,7 +12,7 @@ dependencies {
 
 version = '1.0'
 
-sonarpackaging {
+sonarPackaging {
     pluginDir = "$buildDir/myServer"
     pluginKey = 'example'
     pluginClass = 'com.example.HelloWorld'

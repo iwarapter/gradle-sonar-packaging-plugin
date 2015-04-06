@@ -1,4 +1,4 @@
-apply plugin: 'com.iadams.sonar-packaging'
+apply plugin: 'com.iadams.sonarPackaging'
 
 repositories {
     mavenCentral()
@@ -10,7 +10,7 @@ dependencies {
     compile 'com.google.gwt:gwt-user:2.7.0'
 }
 
-sonarpackaging {
+sonarPackaging {
     pluginDir = "$buildDir/myServer"
     pluginKey = 'example'
     pluginClass = 'org.sonar.plugins.sample.SamplePlugin'

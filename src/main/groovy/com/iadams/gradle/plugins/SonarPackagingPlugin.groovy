@@ -15,7 +15,7 @@ import org.gradle.api.plugins.JavaPlugin
 class SonarPackagingPlugin implements Plugin<Project> {
 
     static final SONAR_PACKAGING_GROUP = 'Sonar Packaging'
-    static final SONAR_PACKAGING_EXTENSION = 'sonarpackaging'
+    static final SONAR_PACKAGING_EXTENSION = 'sonarPackaging'
     static final SONAR_PACKAGING_ORGANIZATION_EXTENSION = 'organization'
     static final SONAR_PACKAGING_TASK = 'pluginPackaging'
     static final SONAR_PLUGIN_LOCAL_DEPLOY_TASK = 'localDeploy'
