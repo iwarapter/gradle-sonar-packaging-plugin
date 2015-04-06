@@ -33,10 +33,9 @@ class PackagingExtension {
 
     String pluginDescription
 
-    //TODO Add support for all the other Manifest info
-    String pluginParent = ''
+    String pluginParent = null
     String pluginLicense = ''
-    String requirePlugins = ''
+    String requirePlugins = null
     String pluginUrl = ''
     String pluginIssueTrackerUrl = ''
     String pluginTermsConditionsUrl = ''

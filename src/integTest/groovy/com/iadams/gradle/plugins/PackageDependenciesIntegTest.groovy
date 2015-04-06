@@ -113,4 +113,26 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
         result.standardOutput.contains("The following dependencies should be defined with scope 'provided': [log4j]")
         result.standardOutput.contains("The following dependencies should be defined with scope 'provided': [gwt-user]")
     }
+
+    def "build with parent and plugin dependencies fails"(){
+        setup:
+        copyResources('require-plugin-and-parent.gradle', 'build.gradle')
+
+        when:
+        ExecutionResult result = runTasksWithFailure('build')
+
+        then:
+        result.standardError.contains("The plugin 'example' can't be both part of the plugin 'java' and having a dependency on 'scm:1.0-SNAPSHOT'")
+    }
+
+    def "cannot define self as parent"(){
+        setup:
+        copyResources('self-parent.gradle', 'build.gradle')
+
+        when:
+        ExecutionResult result = runTasksWithFailure('build')
+
+        then:
+        result.standardError.contains("The plugin 'example' can't be his own parent. Please remove the 'Plugin-Parent' property.")
+    }
 }

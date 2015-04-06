@@ -7,6 +7,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.bundling.Jar
 
@@ -55,15 +56,19 @@ class PackagePluginTask extends Jar {
     String pluginTermsConditionsUrl
 
     @Input
+    @Optional
     Boolean useChildFirstClassLoader
 
     @Input
-    String pluginParent
+    @Optional
+    String pluginParent = null
 
     @Input
-    String requirePlugins
+    @Optional
+    String requirePlugins = null
 
     @Input
+    @Optional
     String basePlugin
 
     @Input
@@ -123,6 +128,8 @@ class PackagePluginTask extends Jar {
 
         getLogger().info '-------------------------------------------------------'
 
+        checkParentAndRequiresPluginProperties()
+
         if(!skipDependenciesPackaging) {
 
             List<ResolvedDependency> dependencies = new DependencyQuery(project).getNotProvidedDependencies()
@@ -168,6 +175,15 @@ class PackagePluginTask extends Jar {
     private void checkPluginClass() throws GradleException {
         if(!new File(project.sourceSets.main.output.classesDir, getPluginClass().replace('.', '/') + ".class").exists()){
             throw new GradleException("Plugin class not found: " + getPluginClass())
+        }
+    }
+
+    private void checkParentAndRequiresPluginProperties() {
+        if (getPluginParent() != null && getRequirePlugins() != null) {
+            throw new GradleException("The plugin '${getPluginKey()}' can't be both part of the plugin '${getPluginParent()}' and having a dependency on '${getRequirePlugins()}'")
+        }
+        if (getPluginParent() != null && getPluginParent().equals(getPluginKey())) {
+            throw new GradleException("The plugin '${getPluginKey()}' can't be his own parent. Please remove the '${PluginManifest.PARENT}' property.")
         }
     }
 }
