@@ -3,6 +3,7 @@ apply plugin: 'groovy'
 apply plugin: 'maven'
 apply from: "$rootDir/gradle/jacoco.gradle"
 apply from: "$rootDir/gradle/sonar.gradle"
+apply from: "$rootDir/gradle/groovydoc.gradle"
 
 group = 'com.iadams.plugins'
 version = '0.1-SNAPSHOT'
@@ -22,6 +23,19 @@ dependencies {
 
     testCompile ('com.netflix.nebula:nebula-test:2.2.1') { exclude group: 'org.codehaus.groovy' }
 }
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task groovydocJar(type: Jar, dependsOn: groovydoc) {
+    classifier = 'groovydoc'
+    from groovydoc.destinationDir
+}
+
+build.dependsOn sourcesJar
+build.dependsOn groovydocJar
 
 sourceSets {
     integTest {
