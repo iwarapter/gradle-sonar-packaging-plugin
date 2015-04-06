@@ -45,8 +45,6 @@ class PackagingExtension {
     boolean useChildFirstClassLoader = false
     String basePlugin = ''
 
-    PackagingOrganizationExtension organization = new PackagingOrganizationExtension()
-
     PackagingExtension( Project project){
         pluginName = project.name
         pluginDescription = project.description

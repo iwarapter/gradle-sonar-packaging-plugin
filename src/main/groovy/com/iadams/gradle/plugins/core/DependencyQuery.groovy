@@ -186,11 +186,11 @@ class DependencyQuery {
         for (dep in allDeps) {
             boolean include = true
             if (isSonarPlugin(dep.module.id.toString())) {
-                project.logger.warn("${dep.module.id.toString()} is a SonarQube plugin and will not be packaged in your plugin")
+                project.logger.debug("${dep.module.id.toString()} is a SonarQube plugin and will not be packaged in your plugin")
                 include = false
             }
             if (containsDependency(providedArtifacts, dep)) {
-                project.logger.warn(dep.name + " is provided by SonarQube plugin API and will not be packaged in your plugin")
+                project.logger.debug(dep.name + " is provided by SonarQube plugin API and will not be packaged in your plugin")
                 include = false
             }
             if (include) {

@@ -25,8 +25,9 @@ class SonarPackagingPlugin implements Plugin<Project> {
     void apply(Project project) {
 
         project.plugins.apply JavaPlugin
-        project.extensions.create( SONAR_PACKAGING_EXTENSION, PackagingExtension, project)
-        project.extensions.findByName(SONAR_PACKAGING_EXTENSION).extensions.create( SONAR_PACKAGING_ORGANIZATION_EXTENSION, PackagingOrganizationExtension)
+
+        PackagingExtension packagingExtension = project.extensions.create( SONAR_PACKAGING_EXTENSION, PackagingExtension, project )
+        packagingExtension.extensions.create( SONAR_PACKAGING_ORGANIZATION_EXTENSION, PackagingOrganizationExtension )
         project.configurations.create('provided')
         project.sourceSets.main.compileClasspath += project.configurations.provided
         project.sourceSets.test.compileClasspath += project.configurations.provided
