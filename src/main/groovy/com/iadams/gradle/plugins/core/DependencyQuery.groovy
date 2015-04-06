@@ -22,10 +22,20 @@ class DependencyQuery {
     public static final String SONAR_PLUGIN_API_ARTIFACTID = "sonar-plugin-api"
     public static final String SONAR_PLUGIN_API_TYPE = "jar"
 
+    /**
+     * Helper method that returns a Set of first level module dependencies for the given configuration.
+     * @param configuration
+     * @return
+     */
     Set<ResolvedDependency> getDependencyArtifacts(String configuration){
         project.configurations.findByName(configuration).resolvedConfiguration.firstLevelModuleDependencies
     }
 
+    /**
+     * Queries the first level module dependencies for the provided configuration for the Sonar API.
+     *
+     * @return
+     */
     final ResolvedDependency getSonarPluginApiArtifact() {
 
         for(ResolvedDependency it : getDependencyArtifacts('provided')) {
@@ -37,6 +47,11 @@ class DependencyQuery {
         return null
     }
 
+    /**
+     * Checks the Sonar API is on the provided configuration, throws exception if not found.
+     *
+     * @throws GradleException
+     */
     void checkApiDependency() throws GradleException {
         ResolvedDependency sonarApi = getSonarPluginApiArtifact()
 
@@ -48,10 +63,15 @@ class DependencyQuery {
         }
     }
 
-    void checkForDependencies(String[] group){
-        def ids = []
+    /**
+     * Check the compile dependencies do not have any of the given artifactIds
+     *
+     * @param artifactIds
+     */
+    void checkForDependencies(String[] artifactIds){
+        List<String> ids = []
         getDependencyArtifacts('compile').each{
-            if(group.contains(it.moduleName)) {
+            if(artifactIds.contains(it.moduleName)) {
                 ids.add( it.moduleName )
             }
         }
@@ -66,7 +86,7 @@ class DependencyQuery {
      * @param pomFile
      * @return
      */
-    def getPomPackagingType(File pomFile) {
+    String getPomPackagingType(File pomFile) {
         project.logger.debug "Parsing $pomFile"
         def pom = new XmlSlurper().parseText(pomFile.text)
 
