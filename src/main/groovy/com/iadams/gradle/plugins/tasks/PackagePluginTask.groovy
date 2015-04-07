@@ -146,7 +146,7 @@ class PackagePluginTask extends Jar {
                 logger.info "Following dependencies are packaged in the plugin:\n"
                 dependencies.each{ logger.info "\t${it.moduleGroup}:${it.moduleName}:${it.moduleVersion}" }
                 logger.info "\nSee following page for more details about plugin dependencies:\n"
-                logger.info "\thttp://docs.codehaus.org/display/SONAR/Coding+a+plugin\n"
+                logger.info "\thttp://docs.sonarqube.org/display/SONAR/Coding+a+Plugin\n"
             }
 
             from project.sourceSets.main.output
