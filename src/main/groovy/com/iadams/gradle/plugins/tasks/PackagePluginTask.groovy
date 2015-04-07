@@ -133,7 +133,20 @@ class PackagePluginTask extends Jar {
         if(!getSkipDependenciesPackaging()) {
 
             List<ResolvedDependency> dependencies = new DependencyQuery(project).getNotProvidedDependencies()
-            manifest.attributes.put(PluginManifest.DEPENDENCIES, dependencies.collect{ "META-INF/lib/${it.moduleName}:${it.moduleVersion}.jar" }.join(' '))
+
+            final List<String> deps = new ArrayList<>();
+            String depname;
+            String classifier;
+
+            for (final ResolvedDependency dependency: dependencies) {
+                depname = dependency.moduleName + '-' + dependency.moduleVersion;
+                classifier = dependency.moduleArtifacts.iterator().next().classifier;
+                if (classifier != null)
+                    depname += '-' + classifier;
+                deps.add(depname + ".jar");
+            }
+
+            manifest.attributes.put(PluginManifest.DEPENDENCIES, deps.collect{ "META-INF/lib/${it}" }.join(' '))
 
             if(dependencies.size()>0){
                 logger.info "Following dependencies are packaged in the plugin:\n"
