@@ -180,6 +180,8 @@ class DependencyQuery {
     List<ResolvedDependency> getNotProvidedDependencies(){
         List<ResolvedDependency> result = []
         List<ResolvedDependency> providedArtifacts = getSonarProvidedArtifacts();
+        providedArtifacts += getAllDependencies('provided')
+        providedArtifacts.unique()
 
         List<ResolvedDependency> allDeps = getAllDependencies('compile')
 

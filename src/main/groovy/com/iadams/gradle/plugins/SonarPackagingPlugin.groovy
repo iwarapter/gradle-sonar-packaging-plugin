@@ -29,9 +29,7 @@ class SonarPackagingPlugin implements Plugin<Project> {
         PackagingExtension packagingExtension = project.extensions.create( SONAR_PACKAGING_EXTENSION, PackagingExtension, project )
         packagingExtension.extensions.create( SONAR_PACKAGING_ORGANIZATION_EXTENSION, PackagingOrganizationExtension )
         project.configurations.create('provided')
-        project.sourceSets.main.compileClasspath += project.configurations.provided
-        project.sourceSets.test.compileClasspath += project.configurations.provided
-        project.sourceSets.test.runtimeClasspath += project.configurations.provided
+        project.configurations.compile.extendsFrom(project.configurations.getByName('provided'))
 
         addTasks(project)
     }

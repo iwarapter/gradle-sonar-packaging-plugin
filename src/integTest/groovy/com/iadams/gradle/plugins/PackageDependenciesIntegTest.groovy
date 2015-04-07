@@ -63,7 +63,6 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
         !dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/commons-email-1.2.jar")
     }
 
-
     def "package dependencies excluded from api"(){
         setup:
         //forked for dependency resolution.
@@ -92,6 +91,7 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
     def "build with api in provided scope passes"(){
         given:
         copyResources('api-in-provided-scope.gradle', 'build.gradle')
+        fork = true
 
         expect:
         runTasksSuccessfully('build')
@@ -100,6 +100,7 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
     def "build with api passes"(){
         given:
         copyResources('build-with-api.gradle', 'build.gradle')
+        fork = true
 
         expect:
         runTasksSuccessfully('build')
