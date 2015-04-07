@@ -135,15 +135,9 @@ class PackagePluginTask extends Jar {
             List<ResolvedDependency> dependencies = new DependencyQuery(project).getNotProvidedDependencies()
 
             final List<String> deps = new ArrayList<>();
-            String depname;
-            String classifier;
-
-            for (final ResolvedDependency dependency: dependencies) {
-                depname = dependency.moduleName + '-' + dependency.moduleVersion;
-                classifier = dependency.moduleArtifacts.iterator().next().classifier;
-                if (classifier != null)
-                    depname += '-' + classifier;
-                deps.add(depname + ".jar");
+            dependencies.each{
+                String classifier = it.moduleArtifacts[0].classifier ? "-${it.moduleArtifacts[0].classifier }" : ''
+                deps.add("${it.moduleName}-${it.moduleVersion}${classifier}.jar")
             }
 
             manifest.attributes.put(PluginManifest.DEPENDENCIES, deps.collect{ "META-INF/lib/${it}" }.join(' '))
