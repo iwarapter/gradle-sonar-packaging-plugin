@@ -12,24 +12,31 @@ Build Status
 
 Latest Version
 --------------
-Currently unpubished.
+All versions can be found [here].
 
 Usage
 -----------
 
-To apply the plugin:
+Build script snippet for use in all Gradle versions:
 ```
 buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
     }
-    dependencies {
-        classpath 'com.iadams.plugins:gradle-sonar-packaging-plugin:0.1-SNAPSHOT'
-    }
+  }
+  dependencies {
+    classpath "gradle.plugin.com.iadams.plugins:gradle-sonar-packaging-plugin:0.1"
+  }
 }
 
-apply plugin: 'com.iadams.sonar-packaging'
+apply plugin: "com.iadams.sonar-packaging"
+```
+Build script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
+```
+plugins {
+  id "com.iadams.sonar-packaging" version "0.1"
+}
 ```
 
 Tasks
@@ -91,5 +98,5 @@ Property     | Description
 `organization name` | Organization name.
 `organization url` | Organization url.
 
-[pldoc]:http://pldoc.sourceforge.net/maven-site/
 [SonarQube]:http://www.sonarqube.org/
+[here]:https://plugins.gradle.org/plugin/com.iadams.sonar-packaging
