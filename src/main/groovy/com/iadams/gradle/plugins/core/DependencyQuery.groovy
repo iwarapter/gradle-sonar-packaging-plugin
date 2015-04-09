@@ -174,7 +174,8 @@ class DependencyQuery {
     }
 
     /**
-     * Get a list of all dependencies not provided by Soanr.
+     * Get a list of all dependencies not provided by Sonar.
+     *
      * @return
      */
     List<ResolvedDependency> getNotProvidedDependencies(){
@@ -199,7 +200,7 @@ class DependencyQuery {
                 result.add(dep)
             }
         }
-        return result
+        return result.unique{a,b -> (a.moduleGroup <=> b.moduleGroup ?: a.moduleName <=> b.moduleName ?: a.moduleVersion <=> b.moduleVersion) }
     }
 
     /**
