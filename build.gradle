@@ -1,3 +1,15 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.gradle.publish:plugin-publish-plugin:0.9.0"
+    }
+}
+
+apply plugin: "com.gradle.plugin-publish"
 apply plugin: 'idea'
 apply plugin: 'groovy'
 apply plugin: 'maven'
@@ -6,7 +18,7 @@ apply from: "$rootDir/gradle/sonar.gradle"
 apply from: "$rootDir/gradle/groovydoc.gradle"
 
 group = 'com.iadams.plugins'
-version = '0.1-SNAPSHOT'
+version = '0.1'
 
 description = 'Gradle plugin for packaging SonarQube plugins.'
 
@@ -22,6 +34,20 @@ dependencies {
     compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7'
 
     testCompile ('com.netflix.nebula:nebula-test:2.2.1') { exclude group: 'org.codehaus.groovy' }
+}
+
+pluginBundle {
+    website = 'https://github.com/iwarapter/gradle-sonar-packaging-plugin'
+    vcsUrl = 'https://github.com/iwarapter/gradle-sonar-packaging-plugin'
+    description = 'Plugin for packaging SonarQube plugins.'
+    tags = ['sonar', 'sonarqube']
+
+    plugins {
+        sonarPackagingPlugin {
+            id = 'com.iadams.sonar-packaging'
+            displayName = 'Gradle Sonar Packaging Plugin'
+        }
+    }
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
