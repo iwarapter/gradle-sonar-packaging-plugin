@@ -3,8 +3,6 @@ Gradle Sonar Packaging Plugin
 
 This is a gradle plugin for building plugins for [SonarQube] it is a port of the original maven plugin. 
 
-##### Work In Progress
-
 
 Build Status
 ------------
