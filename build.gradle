@@ -6,6 +6,7 @@ buildscript {
     }
     dependencies {
         classpath "com.gradle.publish:plugin-publish-plugin:0.9.0"
+        classpath "nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0"
     }
 }
 
@@ -13,12 +14,13 @@ apply plugin: "com.gradle.plugin-publish"
 apply plugin: 'idea'
 apply plugin: 'groovy'
 apply plugin: 'maven'
+apply plugin: 'license'
 apply from: "$rootDir/gradle/jacoco.gradle"
 apply from: "$rootDir/gradle/sonar.gradle"
 apply from: "$rootDir/gradle/groovydoc.gradle"
 
 group = 'com.iadams.plugins'
-version = '0.2-SNAPSHOT'
+version = '0.1.1'
 
 description = 'Gradle plugin for packaging SonarQube plugins.'
 
@@ -48,6 +50,11 @@ pluginBundle {
             displayName = 'Gradle Sonar Packaging Plugin'
         }
     }
+}
+
+license {
+    header rootProject.file('LICENSE')
+    includes(["**/*.java", "**/*.groovy"])
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {

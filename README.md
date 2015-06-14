@@ -6,6 +6,7 @@ This is a gradle plugin for building plugins for [SonarQube] it is a port of the
 Waffle Board (Issues)
 ------------
 [![Stories in Ready](https://badge.waffle.io/iwarapter/gradle-sonar-packaging-plugin.png?label=ready&title=Ready)](https://waffle.io/iwarapter/gradle-sonar-packaging-plugin)
+[![Stories in Ready](https://badge.waffle.io/iwarapter/gradle-sonar-packaging-plugin.png?label=In Progress&title=In Progress)](https://waffle.io/iwarapter/gradle-sonar-packaging-plugin)
 
 Build Status
 ------------
