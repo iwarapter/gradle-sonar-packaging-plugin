@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/iwarapter/gradle-sonar-packaging-plugin.png?label=ready&title=Ready)](https://waffle.io/iwarapter/gradle-sonar-packaging-plugin)
 Gradle Sonar Packaging Plugin
 =========
 
