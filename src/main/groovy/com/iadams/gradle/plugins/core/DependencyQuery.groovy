@@ -244,7 +244,7 @@ class DependencyQuery {
     if (dependency != null) {
       boolean provided
       if (dependency.getParents().findAll { it.configuration.equals('compile') } != null) {
-        provided = isParentProvided || ("org.codehaus.sonar".equals(dependency.moduleGroup)) || ("org.sonarsource.sonarqube".equals(dependency.moduleGroup))
+        provided = isParentProvided || (SONAR_GROUPID_OLD.equals(dependency.moduleGroup)) || (SONAR_GROUPID.equals(dependency.moduleGroup))
       } else {
         provided = isParentProvided
       }
