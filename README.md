@@ -28,7 +28,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "gradle.plugin.com.iadams.plugins:gradle-sonar-packaging-plugin:0.1"
+    classpath "gradle.plugin.com.iadams.plugins:gradle-sonar-packaging-plugin:0.1.2"
   }
 }
 
@@ -37,7 +37,7 @@ apply plugin: "com.iadams.sonar-packaging"
 Build script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
 ```
 plugins {
-  id "com.iadams.sonar-packaging" version "0.1"
+  id "com.iadams.sonar-packaging" version "0.1.2"
 }
 ```
 
