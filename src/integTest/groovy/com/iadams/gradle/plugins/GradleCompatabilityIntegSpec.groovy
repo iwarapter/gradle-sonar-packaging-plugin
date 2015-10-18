@@ -56,6 +56,6 @@ class GradleCompatabilityIntegSpec extends SonarPackagingBaseIntegSpec {
 
         where:
         //Add future versions, not backwards compatible.
-        requestedGradleVersion << ['2.3']
+        requestedGradleVersion << ['2.3', '2.4', '2.5', '2.6', '2.7']
     }
 }

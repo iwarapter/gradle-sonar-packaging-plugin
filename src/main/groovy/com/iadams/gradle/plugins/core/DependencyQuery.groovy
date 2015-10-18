@@ -41,7 +41,8 @@ class DependencyQuery {
         this.project = proj
     }
 
-    public static final String SONAR_GROUPID = "org.codehaus.sonar"
+    public static final String SONAR_GROUPID_OLD = "org.codehaus.sonar"
+    public static final String SONAR_GROUPID = "org.sonarsource.sonarqube"
     public static final String SONAR_PLUGIN_API_ARTIFACTID = "sonar-plugin-api"
     public static final String SONAR_PLUGIN_API_TYPE = "jar"
 
@@ -62,8 +63,12 @@ class DependencyQuery {
     final ResolvedDependency getSonarPluginApiArtifact() {
 
         for(ResolvedDependency it : getDependencies('provided')) {
-            if (SONAR_GROUPID.equals(it.moduleGroup) && SONAR_PLUGIN_API_ARTIFACTID.equals(it.moduleName)
+            if (SONAR_GROUPID_OLD.equals(it.moduleGroup) && SONAR_PLUGIN_API_ARTIFACTID.equals(it.moduleName)
                     && SONAR_PLUGIN_API_TYPE.equals(it.moduleArtifacts[0].type)) {
+                return it
+            }
+            if (SONAR_GROUPID.equals(it.moduleGroup) && SONAR_PLUGIN_API_ARTIFACTID.equals(it.moduleName)
+                && SONAR_PLUGIN_API_TYPE.equals(it.moduleArtifacts[0].type)) {
                 return it
             }
         }
@@ -76,13 +81,13 @@ class DependencyQuery {
      * @throws GradleException
      */
     void checkApiDependency() throws GradleException {
-        ResolvedDependency sonarApi = getSonarPluginApiArtifact()
-
         project.logger.info "Checking for $SONAR_PLUGIN_API_ARTIFACTID"
+
+        ResolvedDependency sonarApi = getSonarPluginApiArtifact()
 
         if (sonarApi == null) {
             throw new GradleException(
-                    "$SONAR_GROUPID:$SONAR_PLUGIN_API_ARTIFACTID should be declared in dependencies")
+                    "$SONAR_GROUPID_OLD:$SONAR_PLUGIN_API_ARTIFACTID or $SONAR_GROUPID:$SONAR_PLUGIN_API_ARTIFACTID should be declared in dependencies")
         }
     }
 
@@ -239,7 +244,7 @@ class DependencyQuery {
         if(dependency != null) {
             boolean provided
             if(dependency.getParents().findAll{ it.configuration.equals('compile')} != null){
-                provided = isParentProvided || ("org.codehaus.sonar".equals(dependency.moduleGroup))
+                provided = isParentProvided || ("org.codehaus.sonar".equals(dependency.moduleGroup)) || ("org.sonarsource.sonarqube".equals(dependency.moduleGroup))
             }
             else{
                 provided = isParentProvided

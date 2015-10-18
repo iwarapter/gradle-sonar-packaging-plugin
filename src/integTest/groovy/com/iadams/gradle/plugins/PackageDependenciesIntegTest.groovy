@@ -41,20 +41,19 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
         setup:
         //forked for dependency resolution.
         fork = true
-        //remoteDebug = true
         copyResources('deps-to-exclude.gradle', 'build.gradle')
 
         expect:
         runTasksSuccessfully('build')
         !dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/commons-lang-2.5.jar")
         !dependencyExists('build/libs/example-1.0.jar', 'META-INF/lib/sonar-plugin-api-2.4.jar')
+        !dependencyExists('build/libs/example-1.0.jar', 'META-INF/lib/sonar-plugin-api-5.2-RC2.jar')
     }
 
     def "sonar plugins are not packaged"() {
         setup:
         //forked for dependency resolution.
         fork = true
-        //remoteDebug = true
         copyResources('build-with-sonar-plugin.gradle', 'build.gradle')
 
         expect:
@@ -67,7 +66,6 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
         setup:
         //forked for dependency resolution.
         fork = true
-        //remoteDebug = true
         copyResources('should-be-packaged.gradle', 'build.gradle')
 
         expect:
@@ -79,7 +77,6 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
         setup:
         //forked for dependency resolution.
         fork = true
-        //remoteDebug = true
         copyResources('provided-should-not-be-packaged.gradle', 'build.gradle')
 
         expect:
@@ -91,7 +88,6 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
         setup:
         //forked for dependency resolution.
         fork = true
-        //remoteDebug = true
         copyResources('package-excluded-api-deps.gradle', 'build.gradle')
 
         expect:
@@ -109,7 +105,7 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
         ExecutionResult result = runTasksWithFailure('build')
 
         then:
-        result.standardError.contains("org.codehaus.sonar:sonar-plugin-api should be declared in dependencies")
+        result.standardError.contains("org.codehaus.sonar:sonar-plugin-api or org.sonarsource.sonarqube:sonar-plugin-api should be declared in dependencies")
     }
 
     def "build with api in provided scope passes"(){
@@ -119,6 +115,15 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
 
         expect:
         runTasksSuccessfully('build')
+    }
+
+    def "build with old api passes"(){
+      given:
+      copyResources('build-with-old-api.gradle', 'build.gradle')
+      fork = true
+
+      expect:
+      runTasksSuccessfully('build')
     }
 
     def "build with api passes"(){
