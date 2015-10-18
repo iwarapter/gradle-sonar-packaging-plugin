@@ -30,15 +30,15 @@ import spock.lang.Specification
  * Created by iwarapter
  */
 class PluginManifestSpec extends Specification {
-    def "AddManifestProperty"() {
-        setup:
-        PluginManifest manifest = new PluginManifest()
+  def "AddManifestProperty"() {
+    setup:
+    PluginManifest manifest = new PluginManifest()
 
-        when:
-        manifest.addManifestProperty('Foo', 'Bar')
+    when:
+    manifest.addManifestProperty('Foo', 'Bar')
 
-        then:
-        manifest.attributes.containsKey('Foo')
-        manifest.attributes.containsValue('Bar')
-    }
+    then:
+    manifest.attributes.containsKey('Foo')
+    manifest.attributes.containsValue('Bar')
+  }
 }

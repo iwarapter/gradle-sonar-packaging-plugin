@@ -1,17 +1,17 @@
 apply plugin: 'com.iadams.sonar-packaging'
 
 repositories {
-    mavenCentral()
+  mavenCentral()
 }
 
 dependencies {
-    provided "org.sonarsource.sonarqube:sonar-plugin-api:5.2-RC2"
+  provided "org.sonarsource.sonarqube:sonar-plugin-api:5.2-RC2"
 }
 
 sonarPackaging {
-    pluginDir = "$buildDir/myServer"
-    pluginKey = 'example'
-    pluginClass = 'org.sonar.plugins.sample.SamplePlugin'
-    pluginName = 'Example'
-    pluginDescription = 'An Example Plugin!'
+  pluginDir = "$buildDir/myServer"
+  pluginKey = 'example'
+  pluginClass = 'org.sonar.plugins.sample.SamplePlugin'
+  pluginName = 'Example'
+  pluginDescription = 'An Example Plugin!'
 }

@@ -29,7 +29,7 @@ package com.iadams.gradle.plugins.extensions
  */
 class PackagingOrganizationExtension {
 
-    String name = ''
-    String url = ''
+  String name = ''
+  String url = ''
 
 }

@@ -1,19 +1,19 @@
 apply plugin: 'com.iadams.sonar-packaging'
 
 repositories {
-    mavenCentral()
+  mavenCentral()
 }
 
 dependencies {
-    provided 'org.codehaus.sonar:sonar-plugin-api:4.5.2'
-    compile 'log4j:log4j:1.2.17'
-    compile 'com.google.gwt:gwt-user:2.7.0'
+  provided 'org.codehaus.sonar:sonar-plugin-api:4.5.2'
+  compile 'log4j:log4j:1.2.17'
+  compile 'com.google.gwt:gwt-user:2.7.0'
 }
 
 sonarPackaging {
-    pluginDir = "$buildDir/myServer"
-    pluginKey = 'example'
-    pluginClass = 'org.sonar.plugins.sample.SamplePlugin'
-    pluginName = 'Example'
-    pluginDescription = 'An Example Plugin!'
+  pluginDir = "$buildDir/myServer"
+  pluginKey = 'example'
+  pluginClass = 'org.sonar.plugins.sample.SamplePlugin'
+  pluginName = 'Example'
+  pluginDescription = 'An Example Plugin!'
 }

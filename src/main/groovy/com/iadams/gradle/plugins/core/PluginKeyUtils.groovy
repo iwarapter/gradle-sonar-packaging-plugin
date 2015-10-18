@@ -31,7 +31,7 @@ import org.apache.commons.lang.StringUtils
  */
 final class PluginKeyUtils {
 
-	static boolean isValid(String pluginKey){
-		return StringUtils.isNotBlank(pluginKey) && StringUtils.isAlphanumeric(pluginKey);
-	}
+  static boolean isValid(String pluginKey) {
+    return StringUtils.isNotBlank(pluginKey) && StringUtils.isAlphanumeric(pluginKey);
+  }
 }

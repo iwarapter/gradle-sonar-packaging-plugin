@@ -1,22 +1,22 @@
 apply plugin: 'com.iadams.sonar-packaging'
 
 repositories {
-    mavenCentral()
+  mavenCentral()
 }
 
 dependencies {
-    provided ('org.codehaus.sonar:sonar-plugin-api:4.5.2') {
-        exclude (group: 'org.codehaus.plexus', module: 'plexus-utils')
-    }
-    compile 'org.codehaus.plexus:plexus-utils:1.5.6'
+  provided('org.codehaus.sonar:sonar-plugin-api:4.5.2') {
+    exclude(group: 'org.codehaus.plexus', module: 'plexus-utils')
+  }
+  compile 'org.codehaus.plexus:plexus-utils:1.5.6'
 }
 
 version = '1.0'
 
 sonarPackaging {
-    pluginDir = "$buildDir/myServer"
-    pluginKey = 'example'
-    pluginClass = 'org.sonar.plugins.sample.SamplePlugin'
-    pluginName = 'Example'
-    pluginDescription = 'An Example Plugin!'
+  pluginDir = "$buildDir/myServer"
+  pluginKey = 'example'
+  pluginClass = 'org.sonar.plugins.sample.SamplePlugin'
+  pluginName = 'Example'
+  pluginDescription = 'An Example Plugin!'
 }

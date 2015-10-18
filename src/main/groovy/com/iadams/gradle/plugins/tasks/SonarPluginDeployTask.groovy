@@ -34,18 +34,18 @@ import org.gradle.api.tasks.TaskAction
  */
 class SonarPluginDeployTask extends DefaultTask {
 
-    @OutputDirectory
-    File localServer
+  @OutputDirectory
+  File localServer
 
-    @InputFile
-    File pluginJar
+  @InputFile
+  File pluginJar
 
-    @TaskAction
-    void deployPlugin() {
-        logger.info "Deploying $pluginJar to $localServer"
-        project.copy {
-            from pluginJar
-            into localServer
-        }
+  @TaskAction
+  void deployPlugin() {
+    logger.info "Deploying $pluginJar to $localServer"
+    project.copy {
+      from pluginJar
+      into localServer
     }
+  }
 }

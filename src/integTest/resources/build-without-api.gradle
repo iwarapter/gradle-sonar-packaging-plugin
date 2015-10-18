@@ -3,9 +3,9 @@ apply plugin: 'com.iadams.sonar-packaging'
 version = '1.0'
 
 sonarPackaging {
-    pluginDir = "$buildDir/myServer"
-    pluginKey = 'example'
-    pluginClass = 'com.example.HelloWorld'
-    pluginName = 'Example'
-    pluginDescription = 'An Example Plugin!'
+  pluginDir = "$buildDir/myServer"
+  pluginKey = 'example'
+  pluginClass = 'com.example.HelloWorld'
+  pluginName = 'Example'
+  pluginDescription = 'An Example Plugin!'
 }

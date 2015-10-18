@@ -39,26 +39,26 @@ import static groovyx.net.http.ContentType.URLENC
  */
 class SonarApiRestartTask extends DefaultTask {
 
-    @Input
-    String serverUrl
+  @Input
+  String serverUrl
 
-    @Input
-    String restartApiPath
+  @Input
+  String restartApiPath
 
-    @TaskAction
-    void restartServer() {
-        logger.lifecycle "Restarting Server: ${getServerUrl()}"
-        try {
-            def http = new HTTPBuilder(getServerUrl())
+  @TaskAction
+  void restartServer() {
+    logger.lifecycle "Restarting Server: ${getServerUrl()}"
+    try {
+      def http = new HTTPBuilder(getServerUrl())
 
-            http.post(path: getRestartApiPath(), requestContentType: URLENC) { }
-        }
-        catch( HttpHostConnectException e ){
-            throw new GradleException("Connection to ${getServerUrl()} refused.", e)
-        }
-        catch( HttpResponseException e){
-            throw new GradleException("Connection Forbidden, is Dev-Mode enabled?", e)
-        }
-        logger.lifecycle "Server Restarted."
+      http.post(path: getRestartApiPath(), requestContentType: URLENC) {}
     }
+    catch (HttpHostConnectException e) {
+      throw new GradleException("Connection to ${getServerUrl()} refused.", e)
+    }
+    catch (HttpResponseException e) {
+      throw new GradleException("Connection Forbidden, is Dev-Mode enabled?", e)
+    }
+    logger.lifecycle "Server Restarted."
+  }
 }
