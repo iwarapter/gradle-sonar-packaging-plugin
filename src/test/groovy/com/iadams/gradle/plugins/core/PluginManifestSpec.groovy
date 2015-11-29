@@ -24,12 +24,14 @@
  */
 package com.iadams.gradle.plugins.core
 
+import spock.lang.Ignore
 import spock.lang.Specification
 
 /**
  * Created by iwarapter
  */
 class PluginManifestSpec extends Specification {
+  @Ignore
   def "AddManifestProperty"() {
     setup:
     PluginManifest manifest = new PluginManifest()

@@ -24,7 +24,10 @@
  */
 package com.iadams.gradle.plugins.utils
 
-import nebula.test.IntegrationSpec
+import org.apache.commons.io.FileUtils
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
+import spock.lang.Specification
 
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -32,7 +35,27 @@ import java.util.jar.JarFile
 /**
  * Created by iwarapter
  */
-class SonarPackagingBaseIntegSpec extends IntegrationSpec {
+class SonarPackagingBaseIntegSpec extends Specification {
+
+  @Rule
+  TemporaryFolder testProjectDir
+  File buildFile
+  File settingsFile
+
+  List<File> pluginClasspath
+
+  def setup() {
+    buildFile = testProjectDir.newFile('build.gradle')
+
+    def pluginClasspathResource = getClass().classLoader.findResource("plugin-classpath.txt")
+    if (pluginClasspathResource == null) {
+      throw new IllegalStateException("Did not find plugin classpath resource, run `testClasses` build task.")
+    }
+
+    pluginClasspath = pluginClasspathResource.readLines().collect { new File(it) }
+
+    settingsFile = testProjectDir.newFile('settings.gradle')
+  }
 
   /**
    * Given a jar file asserts the key/value pair exists in the manifest.
@@ -61,5 +84,68 @@ class SonarPackagingBaseIntegSpec extends IntegrationSpec {
     } else {
       return false
     }
+  }
+
+  /**
+   * Copy a given set of files/directories
+   *
+   * @param srcDir
+   * @param destination
+   */
+  protected void copyResources(String srcDir, String destination) {
+    ClassLoader classLoader = getClass().getClassLoader()
+    URL resource = classLoader.getResource(srcDir)
+    if (resource == null) {
+      throw new SonarPackagingIntegSpecException("Could not find classpath resource: $srcDir")
+    }
+
+    File destinationFile = file(destination)
+    File resourceFile = new File(resource.toURI())
+    if (resourceFile.file) {
+      FileUtils.copyFile(resourceFile, destinationFile)
+    } else {
+      FileUtils.copyDirectory(resourceFile, destinationFile)
+    }
+  }
+
+  protected void writeHelloWorld(String packageDotted, String baseDir = '') {
+    def path = baseDir +'/src/main/java/' + packageDotted.replace('.', '/')
+    directory(path)
+    def javaFile = testProjectDir.newFile(path + '/HelloWorld.java')
+    javaFile << """package ${packageDotted};
+            public class HelloWorld {
+                public static void main(String[] args) {
+                    System.out.println("Hello Integration Test");
+                }
+            }
+        """.stripIndent()
+  }
+
+  protected File file(String path, File baseDir = testProjectDir.root) {
+    def splitted = path.split('/')
+    def directory = splitted.size() > 1 ? directory(splitted[0..-2].join('/'), baseDir) : baseDir
+    def file = new File(directory, splitted[-1])
+    file.createNewFile()
+    file
+  }
+
+  protected File directory(String path, File baseDir = testProjectDir.root) {
+    new File(baseDir, path).with {
+      mkdirs()
+      it
+    }
+  }
+
+  protected File addSubproject(String subprojectName, String subBuildGradleText){
+    def subProjFolder = testProjectDir.newFolder(subprojectName)
+    testProjectDir.newFile("$subprojectName/build.gradle") << "$subBuildGradleText\n"
+    settingsFile << "include '$subprojectName'\n"
+    subProjFolder
+  }
+
+  protected File addSubproject(String subprojectName) {
+    def subProjFolder = testProjectDir.newFolder(subprojectName)
+    settingsFile << "include '$subprojectName'\n"
+    subProjFolder
   }
 }

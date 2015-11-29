@@ -22,41 +22,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.iadams.gradle.plugins
-
-import com.iadams.gradle.plugins.utils.SonarPackagingBaseIntegSpec
-import spock.lang.Ignore
-import spock.lang.Unroll
+package com.iadams.gradle.plugins.utils
 
 /**
- * Created by iwarapter
+ * @author iwarapter
+ *
+ * Custom Exception for failures initiating functional tests.
  */
-class GradleCompatabilityIntegSpec extends SonarPackagingBaseIntegSpec {
-/*
-  @Ignore
-  @Unroll
-  def "should use Gradle #requestedGradleVersion when requested"() {
-    setup:
-    def sub1 = addSubproject('example-squid')
-    def sub2 = addSubproject('sonar-example-plugin')
+class SonarPackagingIntegSpecException extends Exception {
+  SonarPackagingIntegSpecException(String message, Throwable cause) {
+    super(message, cause)
+  }
 
-    writeHelloWorld('com.example', sub1)
-    writeHelloWorld('com.example', sub2)
-    copyResources('build.gradle', 'sonar-example-plugin/build.gradle')
-    fork = true
-    //remoteDebug = true
-
-    and:
-    gradleVersion = requestedGradleVersion
-
-    when:
-    runTasksSuccessfully('build')
-
-    then:
-    manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Description', 'An Example Plugin!')
-
-    where:
-    //Add future versions, not backwards compatible.
-    requestedGradleVersion << ['2.3', '2.4', '2.5', '2.6', '2.7']
-  }*/
+  SonarPackagingIntegSpecException(String message) {
+    super(message)
+  }
 }

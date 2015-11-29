@@ -24,23 +24,22 @@
  */
 package com.iadams.gradle.plugins
 
-import nebula.test.PluginProjectSpec
+import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.testfixtures.ProjectBuilder
+import spock.lang.Specification
 
 /**
  * Created by iwarapter
  */
-class SonarPackagingPluginSpec extends PluginProjectSpec {
+class SonarPackagingPluginSpec extends Specification {
 
   static final String PLUGIN_ID = 'com.iadams.sonar-packaging'
-
-  @Override
-  String getPluginName() {
-    return PLUGIN_ID
-  }
+  Project project
 
   def setup() {
-    project.apply plugin: pluginName
+    project = ProjectBuilder.builder().build()
+    project.pluginManager.apply PLUGIN_ID
   }
 
   def "apply creates sonarPackaging extension"() {
