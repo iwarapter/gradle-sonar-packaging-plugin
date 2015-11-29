@@ -27,27 +27,11 @@ package com.iadams.gradle.plugins
 import com.iadams.gradle.plugins.utils.SonarPackagingBaseIntegSpec
 import org.gradle.testkit.runner.GradleRunner
 
+import static org.gradle.testkit.runner.TaskOutcome.FAILED
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import static org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 
 class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
-
-  def "hello world task prints hello world"() {
-    given:
-    writeHelloWorld('com.example')
-    copyResources('build.gradle', 'build.gradle')
-
-    when:
-    def result = GradleRunner.create()
-        .withProjectDir(testProjectDir.root)
-        .withArguments('build')
-        .withPluginClasspath(pluginClasspath)
-        .build()
-
-    then:
-    result.output.contains('pluginPackaging')
-    result.task(":build").outcome == SUCCESS
-  }
 
   def "applying plugins provides all tasks"() {
     setup:
@@ -62,6 +46,7 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
         .build()
 
     then:
+    result.task(":tasks").outcome == SUCCESS
     result.output.contains('localDeploy - Copies the built plugin to the local server.')
     result.output.contains('restartServer - Restarts a SonarQube server running in dev mode.')
   }
@@ -74,13 +59,14 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
     settingsFile << '''rootProject.name="example"'''
 
     when:
-    GradleRunner.create()
+    def result = GradleRunner.create()
         .withProjectDir(testProjectDir.root)
         .withArguments('build', 'localDeploy')
         .withPluginClasspath(pluginClasspath)
         .build()
 
     then:
+    result.task(":build").outcome == SUCCESS
     file('build/myServer/example-1.0.jar').exists()
   }
 
@@ -93,17 +79,18 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
     settingsFile << '''rootProject.name="example"'''
 
     when:
-    GradleRunner.create()
+    def result = GradleRunner.create()
         .withProjectDir(testProjectDir.root)
         .withArguments('build', 'localDeploy')
         .withPluginClasspath(pluginClasspath)
         .build()
 
     then:
+    result.task(":build").outcome == SUCCESS
     file('build/myServer/example-1.0.jar').exists()
 
     when:
-    def result = GradleRunner.create()
+    result = GradleRunner.create()
         .withProjectDir(testProjectDir.root)
         .withArguments('localDeploy')
         .withPluginClasspath(pluginClasspath)
@@ -119,13 +106,15 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
     copyResources('build.gradle', 'build.gradle')
     settingsFile << '''rootProject.name="example"'''
 
-    expect:
-    GradleRunner.create()
+    when:
+    def result = GradleRunner.create()
         .withProjectDir(testProjectDir.root)
         .withArguments('build')
         .withPluginClasspath(pluginClasspath)
         .build()
 
+    then:
+    result.task(":build").outcome == SUCCESS
     manifestContains('build/libs/example-1.0.jar', 'Plugin-Description', 'An Example Plugin!')
   }
 
@@ -147,13 +136,14 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
     copyResources('multi-project-build.gradle', 'sonar-example-plugin/build.gradle')
 
     when:
-    GradleRunner.create()
+    def result = GradleRunner.create()
         .withProjectDir(testProjectDir.root)
         .withArguments('build')
         .withPluginClasspath(pluginClasspath)
         .build()
 
     then:
+    result.task(":sonar-example-plugin:build").outcome == SUCCESS
     manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Description', 'An Example Plugin!')
     dependencyExists('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'META-INF/lib/example-squid-1.0.jar')
     dependencyExists('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'META-INF/lib/example-checks-1.0.jar')
@@ -179,6 +169,7 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
         .buildAndFail()
 
     then:
+    result.task(":pluginPackaging").outcome == FAILED
     result.output.contains('Plugin key is badly formatted. Please use ascii letters and digits only: ')
   }
 }
