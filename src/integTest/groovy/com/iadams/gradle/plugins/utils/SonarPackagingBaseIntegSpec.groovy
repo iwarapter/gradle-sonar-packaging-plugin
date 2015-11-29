@@ -32,9 +32,6 @@ import spock.lang.Specification
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 
-/**
- * Created by iwarapter
- */
 class SonarPackagingBaseIntegSpec extends Specification {
 
   @Rule
