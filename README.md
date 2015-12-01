@@ -1,12 +1,7 @@
 Gradle Sonar Packaging Plugin
 =========
 
-This is a gradle plugin for building plugins for [SonarQube] it is a port of the original maven plugin. 
-
-Waffle Board (Issues)
-------------
-[![Stories in Ready](https://badge.waffle.io/iwarapter/gradle-sonar-packaging-plugin.png?label=ready&title=Ready)](https://waffle.io/iwarapter/gradle-sonar-packaging-plugin)
-[![Stories in Ready](https://badge.waffle.io/iwarapter/gradle-sonar-packaging-plugin.png?label=In Progress&title=In Progress)](https://waffle.io/iwarapter/gradle-sonar-packaging-plugin)
+This is a gradle plugin for building plugins for [SonarQube] it is a port of the original maven plugin.
 
 Build Status
 ------------
@@ -28,7 +23,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "gradle.plugin.com.iadams.plugins:gradle-sonar-packaging-plugin:0.1.2"
+    classpath "gradle.plugin.com.iadams.plugins:gradle-sonar-packaging-plugin:0.1.3"
   }
 }
 
@@ -37,7 +32,7 @@ apply plugin: "com.iadams.sonar-packaging"
 Build script snippet for new, incubating, plugin mechanism introduced in Gradle 2.1:
 ```
 plugins {
-  id "com.iadams.sonar-packaging" version "0.1.2"
+  id "com.iadams.sonar-packaging" version "0.1.3"
 }
 ```
 
