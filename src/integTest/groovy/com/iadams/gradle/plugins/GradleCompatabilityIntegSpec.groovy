@@ -53,6 +53,9 @@ class GradleCompatabilityIntegSpec extends SonarPackagingBaseIntegSpec {
     then:
     result.task(':sonar-example-plugin:build').outcome == SUCCESS
     manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Description', 'An Example Plugin!')
+    manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Key', 'example')
+    manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Class', 'com.example.HelloWorld')
+    manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Name', 'Example')
 
     where:
     //using the new framework
@@ -92,6 +95,9 @@ class GradleCompatabilityIntegSpec extends SonarPackagingBaseIntegSpec {
     then:
     result.task(':sonar-example-plugin:build').outcome == SUCCESS
     manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Description', 'An Example Plugin!')
+    manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Key', 'example')
+    manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Class', 'com.example.HelloWorld')
+    manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Name', 'Example')
 
     where:
     //testing the older versions
