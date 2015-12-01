@@ -25,11 +25,11 @@
 package com.iadams.gradle.plugins
 
 import com.iadams.gradle.plugins.utils.SonarPackagingBaseIntegSpec
-import nebula.test.functional.ExecutionResult
+import org.gradle.testkit.runner.GradleRunner
 
-/**
- * Created by iwarapter
- */
+import static org.gradle.testkit.runner.TaskOutcome.FAILED
+import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
+
 class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
 
   def setup() {
@@ -39,12 +39,18 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
 
   def "sonar provided dependencies are NOT packaged"() {
     setup:
-    //forked for dependency resolution.
-    fork = true
     copyResources('deps-to-exclude.gradle', 'build.gradle')
 
-    expect:
-    runTasksSuccessfully('build')
+    when:
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withArguments('build')
+        .withPluginClasspath(pluginClasspath)
+        .build()
+
+    then:
+    result.task(':build').outcome == SUCCESS
+    file('build/libs/example-1.0.jar').exists()
     !dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/commons-lang-2.5.jar")
     !dependencyExists('build/libs/example-1.0.jar', 'META-INF/lib/sonar-plugin-api-2.4.jar')
     !dependencyExists('build/libs/example-1.0.jar', 'META-INF/lib/sonar-plugin-api-5.2-RC2.jar')
@@ -52,46 +58,70 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
 
   def "sonar plugins are not packaged"() {
     setup:
-    //forked for dependency resolution.
-    fork = true
     copyResources('build-with-sonar-plugin.gradle', 'build.gradle')
 
-    expect:
-    ExecutionResult result = runTasksSuccessfully('build')
+    when:
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withArguments('build')
+        .withPluginClasspath(pluginClasspath)
+        .build()
+
+    then:
+    result.task(':build').outcome == SUCCESS
+    file('build/libs/example-1.0.jar').exists()
     !dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/commons-lang-2.5.jar")
     !dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/sonar-surefire-plugin-2.4.jar")
   }
 
   def "package dependencies NOT provided by sonar"() {
     setup:
-    //forked for dependency resolution.
-    fork = true
     copyResources('should-be-packaged.gradle', 'build.gradle')
 
-    expect:
-    runTasksSuccessfully('build')
+    when:
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withArguments('build')
+        .withPluginClasspath(pluginClasspath)
+        .build()
+
+    then:
+    result.task(':build').outcome == SUCCESS
+    file('build/libs/example-1.0.jar').exists()
     dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/commons-email-1.2.jar")
   }
 
   def "provided scope dependencies should NOT be packaged"() {
     setup:
-    //forked for dependency resolution.
-    fork = true
     copyResources('provided-should-not-be-packaged.gradle', 'build.gradle')
 
-    expect:
-    runTasksSuccessfully('build')
+    when:
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withArguments('build')
+        .withPluginClasspath(pluginClasspath)
+        .build()
+
+    then:
+    result.task(':build').outcome == SUCCESS
+    file('build/libs/example-1.0.jar').exists()
     !dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/commons-email-1.2.jar")
   }
 
   def "package dependencies excluded from api"() {
     setup:
-    //forked for dependency resolution.
-    fork = true
     copyResources('package-excluded-api-deps.gradle', 'build.gradle')
 
-    expect:
-    runTasksSuccessfully('build')
+    when:
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withArguments('build')
+        .withPluginClasspath(pluginClasspath)
+        .build()
+
+    then:
+    result.task(':build').outcome == SUCCESS
+    file('build/libs/example-1.0.jar').exists()
     dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/plexus-utils-1.5.6.jar")
   }
 
@@ -102,50 +132,81 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
     copyResources('build-without-api.gradle', 'build.gradle')
 
     when:
-    ExecutionResult result = runTasksWithFailure('build')
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withArguments('build')
+        .withPluginClasspath(pluginClasspath)
+        .buildAndFail()
 
     then:
-    result.standardError.contains("org.codehaus.sonar:sonar-plugin-api or org.sonarsource.sonarqube:sonar-plugin-api should be declared in dependencies")
+    result.task(':pluginPackaging').outcome == FAILED
+    result.output.contains("org.codehaus.sonar:sonar-plugin-api or org.sonarsource.sonarqube:sonar-plugin-api should be declared in dependencies")
   }
 
   def "build with api in provided scope passes"() {
     given:
     copyResources('api-in-provided-scope.gradle', 'build.gradle')
-    fork = true
 
-    expect:
-    runTasksSuccessfully('build')
+    when:
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withArguments('build')
+        .withPluginClasspath(pluginClasspath)
+        .build()
+
+    then:
+    result.task(':build').outcome == SUCCESS
+    file('build/libs/example-1.0.jar').exists()
   }
 
   def "build with old api passes"() {
     given:
     copyResources('build-with-old-api.gradle', 'build.gradle')
-    fork = true
 
-    expect:
-    runTasksSuccessfully('build')
+    when:
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withArguments('build')
+        .withPluginClasspath(pluginClasspath)
+        .build()
+
+    then:
+    result.task(':build').outcome == SUCCESS
+    file('build/libs/example-1.0.jar').exists()
   }
 
   def "build with api passes"() {
     given:
     copyResources('build-with-api.gradle', 'build.gradle')
-    fork = true
 
-    expect:
-    runTasksSuccessfully('build')
+    when:
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withArguments('build')
+        .withPluginClasspath(pluginClasspath)
+        .build()
+
+    then:
+    result.task(':build').outcome == SUCCESS
+    file('build/libs/example-1.0.jar').exists()
   }
 
   def "build with logging deps logs warnings"() {
     setup:
     copyResources('build-with-logging-deps.gradle', 'build.gradle')
-    fork = true
 
     when:
-    ExecutionResult result = runTasksSuccessfully('build')
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withArguments('build')
+        .withPluginClasspath(pluginClasspath)
+        .build()
 
     then:
-    result.standardOutput.contains("The following dependencies should be defined with scope 'provided': [log4j]")
-    result.standardOutput.contains("The following dependencies should be defined with scope 'provided': [gwt-user]")
+    result.task(':build').outcome == SUCCESS
+    file('build/libs/example-1.0.jar').exists()
+    result.output.contains("The following dependencies should be defined with scope 'provided': [log4j]")
+    result.output.contains("The following dependencies should be defined with scope 'provided': [gwt-user]")
   }
 
   def "build with parent and plugin dependencies fails"() {
@@ -153,10 +214,15 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
     copyResources('require-plugin-and-parent.gradle', 'build.gradle')
 
     when:
-    ExecutionResult result = runTasksWithFailure('build')
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withArguments('build')
+        .withPluginClasspath(pluginClasspath)
+        .buildAndFail()
 
     then:
-    result.standardError.contains("The plugin 'example' can't be both part of the plugin 'java' and having a dependency on 'scm:1.0-SNAPSHOT'")
+    result.task(":pluginPackaging").outcome == FAILED
+    result.output.contains("The plugin 'example' can't be both part of the plugin 'java' and having a dependency on 'scm:1.0-SNAPSHOT'")
   }
 
   def "cannot define self as parent"() {
@@ -164,22 +230,49 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
     copyResources('self-parent.gradle', 'build.gradle')
 
     when:
-    ExecutionResult result = runTasksWithFailure('build')
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withArguments('build')
+        .withPluginClasspath(pluginClasspath)
+        .buildAndFail()
 
     then:
-    result.standardError.contains("The plugin 'example' can't be his own parent. Please remove the 'Plugin-Parent' property.")
+    result.task(":pluginPackaging").outcome == FAILED
+    result.output.contains("The plugin 'example' can't be his own parent. Please remove the 'Plugin-Parent' property.")
   }
 
   def "dependencies with classifiers"() {
     setup:
     copyResources('dependencies-with-classifier.gradle', 'build.gradle')
-    fork = true
 
     when:
-    runTasksSuccessfully('build')
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withArguments('build')
+        .withPluginClasspath(pluginClasspath)
+        .build()
 
     then:
+    result.task(":build").outcome == SUCCESS
+    file('build/libs/example-1.0.jar').exists()
     dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/grappa-2.0.0-beta.4-all.jar")
     manifestContains('build/libs/example-1.0.jar', 'Plugin-Dependencies', 'META-INF/lib/grappa-2.0.0-beta.4-all.jar META-INF/lib/asm-debug-all-5.0.3.jar META-INF/lib/jitescript-0.4.0.jar')
+  }
+
+  def "issue #7"() {
+    setup:
+    copyResources('issue-7.gradle', 'build.gradle')
+
+    when:
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withArguments('build')
+        .withPluginClasspath(pluginClasspath)
+        .build()
+
+    then:
+    result.task(":build").outcome == SUCCESS
+    file('build/libs/example-1.0.jar').exists()
+    !dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/log4j-1.2.17.jar")
   }
 }

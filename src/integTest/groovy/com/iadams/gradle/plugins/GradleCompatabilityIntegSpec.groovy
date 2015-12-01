@@ -25,36 +25,82 @@
 package com.iadams.gradle.plugins
 
 import com.iadams.gradle.plugins.utils.SonarPackagingBaseIntegSpec
+import org.gradle.testkit.runner.GradleRunner
 import spock.lang.Unroll
 
-/**
- * Created by iwarapter
- */
+import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
+
 class GradleCompatabilityIntegSpec extends SonarPackagingBaseIntegSpec {
 
   @Unroll
-  def "should use Gradle #requestedGradleVersion when requested"() {
+  def "compatible with gradle #gradleVersion"() {
     setup:
     def sub1 = addSubproject('example-squid')
     def sub2 = addSubproject('sonar-example-plugin')
 
-    writeHelloWorld('com.example', sub1)
-    writeHelloWorld('com.example', sub2)
+    writeHelloWorld('com.example', sub1.name)
+    writeHelloWorld('com.example', sub2.name)
     copyResources('build.gradle', 'sonar-example-plugin/build.gradle')
-    fork = true
-    //remoteDebug = true
-
-    and:
-    gradleVersion = requestedGradleVersion
 
     when:
-    runTasksSuccessfully('build')
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withGradleVersion(gradleVersion)
+        .withArguments('build')
+        .withPluginClasspath(pluginClasspath)
+        .build()
 
     then:
+    result.task(':sonar-example-plugin:build').outcome == SUCCESS
     manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Description', 'An Example Plugin!')
+    manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Key', 'example')
+    manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Class', 'com.example.HelloWorld')
+    manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Name', 'Example')
 
     where:
-    //Add future versions, not backwards compatible.
-    requestedGradleVersion << ['2.3', '2.4', '2.5', '2.6', '2.7']
+    //using the new framework
+    gradleVersion << ['2.8', '2.9']
+  }
+
+  @Unroll
+  def "compatible with legacy gradle #gradleVersion"() {
+    setup:
+    def sub1 = addSubproject('example-squid')
+    def sub2 = addSubproject('sonar-example-plugin')
+
+    writeHelloWorld('com.example', sub1.name)
+    writeHelloWorld('com.example', sub2.name)
+    copyResources('legacy_build.gradle', 'sonar-example-plugin/build.gradle')
+
+    def classpathString = pluginClasspath
+        .collect { it.absolutePath.replace('\\', '\\\\') } // escape backslashes in Windows paths
+        .collect { "'$it'" }
+        .join(", ")
+
+    new File(sub2, 'build.gradle') << """
+        buildscript {
+            dependencies {
+                classpath files($classpathString)
+            }
+        }
+    """
+
+    when:
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withGradleVersion(gradleVersion)
+        .withArguments('build')
+        .build()
+
+    then:
+    result.task(':sonar-example-plugin:build').outcome == SUCCESS
+    manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Description', 'An Example Plugin!')
+    manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Key', 'example')
+    manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Class', 'com.example.HelloWorld')
+    manifestContains('sonar-example-plugin/build/libs/sonar-example-plugin-1.0.jar', 'Plugin-Name', 'Example')
+
+    where:
+    //testing the older versions
+    gradleVersion << ['2.5', '2.6', '2.7']
   }
 }

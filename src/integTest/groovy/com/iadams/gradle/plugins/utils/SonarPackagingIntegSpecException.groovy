@@ -22,25 +22,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.iadams.gradle.plugins.core
-
-import spock.lang.Ignore
-import spock.lang.Specification
+package com.iadams.gradle.plugins.utils
 
 /**
- * Created by iwarapter
+ * @author iwarapter
+ *
+ * Custom Exception for failures initiating functional tests.
  */
-class PluginManifestSpec extends Specification {
-  @Ignore
-  def "AddManifestProperty"() {
-    setup:
-    PluginManifest manifest = new PluginManifest()
+class SonarPackagingIntegSpecException extends Exception {
+  SonarPackagingIntegSpecException(String message, Throwable cause) {
+    super(message, cause)
+  }
 
-    when:
-    manifest.addManifestProperty('Foo', 'Bar')
-
-    then:
-    manifest.attributes.containsKey('Foo')
-    manifest.attributes.containsValue('Bar')
+  SonarPackagingIntegSpecException(String message) {
+    super(message)
   }
 }

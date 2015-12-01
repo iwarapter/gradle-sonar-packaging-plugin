@@ -20,7 +20,7 @@ apply from: "$rootDir/gradle/sonar.gradle"
 apply from: "$rootDir/gradle/groovydoc.gradle"
 
 group = 'com.iadams.plugins'
-version = '0.1.2'
+version = '0.1.3-SNAPSHOT'
 
 description = 'Gradle plugin for packaging SonarQube plugins.'
 
@@ -35,7 +35,28 @@ dependencies {
     compile gradleApi()
     compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7'
 
-    testCompile ('com.netflix.nebula:nebula-test:3.1.0') { exclude group: 'org.codehaus.groovy' }
+    testCompile gradleTestKit()
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4', {
+      exclude module: 'groovy-all'
+    }
+}
+
+// Write the plugin's classpath to a file to share with the tests
+task createClasspathManifest {
+  def outputDir = file("$buildDir/$name")
+
+  inputs.files sourceSets.main.runtimeClasspath
+  outputs.dir outputDir
+
+  doLast {
+    outputDir.mkdirs()
+    file("$outputDir/plugin-classpath.txt").text = sourceSets.main.runtimeClasspath.join("\n")
+  }
+}
+
+// Add the classpath file to the test runtime classpath
+dependencies {
+  testRuntime files(createClasspathManifest)
 }
 
 pluginBundle {
