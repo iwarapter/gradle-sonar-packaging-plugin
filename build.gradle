@@ -11,7 +11,7 @@ apply from: "$rootDir/gradle/sonar.gradle"
 apply from: "$rootDir/gradle/groovydoc.gradle"
 
 group = 'com.iadams.plugins'
-version = '0.1.3-SNAPSHOT'
+version = '0.1.3'
 description = 'Gradle plugin for packaging SonarQube plugins.'
 
 sourceCompatibility = 1.6
