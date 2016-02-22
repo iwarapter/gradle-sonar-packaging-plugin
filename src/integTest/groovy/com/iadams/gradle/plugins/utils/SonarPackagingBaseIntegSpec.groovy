@@ -76,11 +76,7 @@ class SonarPackagingBaseIntegSpec extends Specification {
   boolean dependencyExists(String buildJar, String name) {
     JarFile jar = new JarFile(file(buildJar).absolutePath)
     JarEntry entry = jar.getJarEntry(name)
-    if (entry != null) {
-      return true
-    } else {
-      return false
-    }
+    return entry != null
   }
 
   /**

@@ -26,7 +26,6 @@ package com.iadams.gradle.plugins.tasks
 
 import com.iadams.gradle.plugins.core.DependencyQuery
 import com.iadams.gradle.plugins.core.PluginKeyUtils
-import com.iadams.gradle.plugins.core.PluginManifest
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.logging.LogLevel
@@ -39,6 +38,12 @@ import org.gradle.api.tasks.bundling.Jar
  * Created by iwarapter
  */
 class PackagePluginTask extends Jar {
+
+  @Override
+  PackagePluginTask manifest(Closure<?> configureClosure) {
+    super.manifest(configureClosure)
+    return this;
+  }
 
   private static final String[] GWT_ARTIFACT_IDS = ["gwt-user", "gwt-dev", "sonar-gwt-api"]
   private static final String[] LOG_GROUP_IDS = ["log4j", "commons-logging"]
@@ -113,41 +118,43 @@ class PackagePluginTask extends Jar {
 
     logger.info "-------------------------------------------------------"
     logger.info "Plugin definition in update center"
-    manifest = new PluginManifest()
-    manifest.addManifestProperty("Created-By", "Gradle")
-    manifest.addManifestProperty("Built-By", System.getProperty('user.name'))
-    manifest.addManifestProperty("Build-Jdk", System.getProperty('java.version'))
-    manifest.addManifestProperty("Build-Time", new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"))
-    manifest.addManifestProperty(PluginManifest.BUILD_DATE, new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"))
-    manifest.addManifestProperty(PluginManifest.MAIN_CLASS, getPluginClass())
-    manifest.addManifestProperty(PluginManifest.DESCRIPTION, getPluginDescription())
-    manifest.addManifestProperty(PluginManifest.DEVELOPERS, getPluginDevelopers())
-    manifest.addManifestProperty(PluginManifest.HOMEPAGE, getPluginUrl())
-    manifest.addManifestProperty(PluginManifest.ISSUE_TRACKER_URL, getPluginIssueTrackerUrl())
-    manifest.addManifestProperty(PluginManifest.KEY, getPluginKey())
-    manifest.addManifestProperty(PluginManifest.LICENSE, getPluginLicense())
-    manifest.addManifestProperty(PluginManifest.NAME, getPluginName())
-    manifest.addManifestProperty(PluginManifest.ORGANIZATION, getOrganizationName())
-    manifest.addManifestProperty(PluginManifest.ORGANIZATION_URL, getOrganizationUrl())
-    manifest.addManifestProperty(PluginManifest.SOURCES_URL, getPluginSourceUrl())
-    manifest.addManifestProperty(PluginManifest.TERMS_CONDITIONS_URL, getPluginTermsConditionsUrl())
-    manifest.addManifestProperty(PluginManifest.VERSION, project.version)
-    manifest.addManifestProperty(PluginManifest.SONAR_VERSION, new DependencyQuery(project).sonarPluginApiArtifact.moduleVersion)
+    //manifest = new PluginManifest()
+    manifest {
+      attributes("Created-By": "Gradle",
+        "Built-By": System.getProperty('user.name'),
+        "Build-Jdk": System.getProperty('java.version'),
+        "Build-Time": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+        "Plugin-BuildDate": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+        "Plugin-Class": getPluginClass(),
+        "Plugin-Description": getPluginDescription(),
+        "Plugin-Developers": getPluginDevelopers(),
+        "Plugin-Homepage": getPluginUrl(),
+        "Plugin-IssueTrackerUrl": getPluginIssueTrackerUrl(),
+        "Plugin-Key": getPluginKey(),
+        "Plugin-License": getPluginLicense(),
+        "Plugin-Name": getPluginName(),
+        "Plugin-Organization": getOrganizationName(),
+        "Plugin-OrganizationUrl": getOrganizationUrl(),
+        "Plugin-SourcesUrl": getPluginSourceUrl(),
+        "Plugin-TermsConditionsUrl": getPluginTermsConditionsUrl(),
+        "Plugin-Version": project.version,
+        "Sonar-Version": new DependencyQuery(project).sonarPluginApiArtifact.moduleVersion)
+    }
 
     /**
      * If these extension points are null dont add to manifest
      */
     if (getUseChildFirstClassLoader()) {
-      manifest.addManifestProperty(PluginManifest.USE_CHILD_FIRST_CLASSLOADER, getUseChildFirstClassLoader().toString())
+      manifest.attributes.put("Plugin-ChildFirstClassLoader", getUseChildFirstClassLoader().toString())
     }
     if (getPluginParent()) {
-      manifest.addManifestProperty(PluginManifest.PARENT, getPluginParent())
+      manifest.attributes.put("Plugin-Parent", getPluginParent())
     }
     if (getRequirePlugins()) {
-      manifest.addManifestProperty(PluginManifest.REQUIRE_PLUGINS, getRequirePlugins())
+      manifest.attributes.put("Plugin-RequirePlugins", getRequirePlugins())
     }
     if (getBasePlugin()) {
-      manifest.addManifestProperty(PluginManifest.BASE_PLUGIN, getBasePlugin())
+      manifest.attributes.put("Plugin-Base", getBasePlugin())
     }
 
     getLogger().info '-------------------------------------------------------'
@@ -164,11 +171,11 @@ class PackagePluginTask extends Jar {
         deps.add("${it.moduleName}-${it.moduleVersion}${classifier}.jar")
       }
 
-      manifest.attributes.put(PluginManifest.DEPENDENCIES, deps.collect { "META-INF/lib/${it}" }.join(' '))
+      manifest.attributes.put("Plugin-Dependencies", deps.collect {"META-INF/lib/${it}"}.join(' '))
 
       if (dependencies.size() > 0) {
         logger.info "Following dependencies are packaged in the plugin:\n"
-        dependencies.each { logger.info "\t${it.moduleGroup}:${it.moduleName}:${it.moduleVersion}" }
+        dependencies.each {logger.info "\t${it.moduleGroup}:${it.moduleName}:${it.moduleVersion}"}
         logger.info "\nSee following page for more details about plugin dependencies:\n"
         logger.info "\thttp://docs.sonarqube.org/display/DEV/Coding+a+Plugin\n"
       }
@@ -176,8 +183,8 @@ class PackagePluginTask extends Jar {
       from project.sourceSets.main.output
       into('META-INF/lib') {
         List<File> artifacts = []
-        dependencies.each { ResolvedDependency dep ->
-          dep.getModuleArtifacts().each { artifacts.add(it.getFile().absoluteFile) }
+        dependencies.each {ResolvedDependency dep ->
+          dep.getModuleArtifacts().each {artifacts.add(it.getFile().absoluteFile)}
         }
         from artifacts
       }
@@ -214,7 +221,7 @@ class PackagePluginTask extends Jar {
       throw new GradleException("The plugin '${getPluginKey()}' can't be both part of the plugin '${getPluginParent()}' and having a dependency on '${getRequirePlugins()}'")
     }
     if (getPluginParent() != null && getPluginParent().equals(getPluginKey())) {
-      throw new GradleException("The plugin '${getPluginKey()}' can't be his own parent. Please remove the '${PluginManifest.PARENT}' property.")
+      throw new GradleException("The plugin '${getPluginKey()}' can't be his own parent. Please remove the '${"Plugin-Parent"}' property.")
     }
   }
 }

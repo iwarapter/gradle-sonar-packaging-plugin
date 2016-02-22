@@ -275,4 +275,23 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
     file('build/libs/example-1.0.jar').exists()
     !dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/log4j-1.2.17.jar")
   }
+
+  def "issue #9"() {
+    setup:
+    writeHelloWorld('com.example')
+    copyResources('issue-9.gradle', 'build.gradle')
+
+    when:
+    def result = GradleRunner.create()
+      .withProjectDir(testProjectDir.root)
+      .withArguments('build')
+      .withPluginClasspath(pluginClasspath)
+      .withDebug(true)
+      .build()
+
+    then:
+    result.task(":build").outcome == SUCCESS
+    file('build/libs/example-1.0.jar').exists()
+    dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/xtream-1.4.8.jar")
+  }
 }
