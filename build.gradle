@@ -10,23 +10,23 @@ sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
 dependencies {
-    compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7'
+  compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7'
 
-    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4', {
-      exclude module: 'groovy-all'
-    }
+  testCompile 'org.spockframework:spock-core:1.0-groovy-2.4', {
+    exclude module: 'groovy-all'
+  }
 }
 
 pluginBundle {
-    website = 'https://github.com/iwarapter/gradle-sonar-packaging-plugin'
-    vcsUrl = 'https://github.com/iwarapter/gradle-sonar-packaging-plugin'
-    description = 'Plugin for packaging SonarQube plugins.'
-    tags = ['sonar', 'sonarqube']
+  website = 'https://github.com/iwarapter/gradle-sonar-packaging-plugin'
+  vcsUrl = 'https://github.com/iwarapter/gradle-sonar-packaging-plugin'
+  description = 'Plugin for packaging SonarQube plugins.'
+  tags = ['sonar', 'sonarqube']
 
-    plugins {
-        sonarPackagingPlugin {
-            id = 'com.iadams.sonar-packaging'
-            displayName = 'Gradle Sonar Packaging Plugin'
-        }
+  plugins {
+    sonarPackagingPlugin {
+      id = 'com.iadams.sonar-packaging'
+      displayName = 'Gradle Sonar Packaging Plugin'
     }
+  }
 }

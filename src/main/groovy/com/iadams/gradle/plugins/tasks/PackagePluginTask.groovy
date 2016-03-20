@@ -163,7 +163,7 @@ class PackagePluginTask extends Jar {
 
     if (!getSkipDependenciesPackaging()) {
 
-      List<ResolvedDependency> dependencies = new DependencyQuery(project).getNotProvidedDependencies()
+      Set<ResolvedDependency> dependencies = new DependencyQuery(project).getNotProvidedDependencies()
 
       final List<String> deps = new ArrayList<>();
       dependencies.each {

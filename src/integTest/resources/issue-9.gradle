@@ -1,0 +1,29 @@
+plugins {
+  id 'com.iadams.sonar-packaging'
+}
+
+repositories {
+  jcenter()
+}
+
+dependencies {
+  compile 'org.apache.commons:commons-lang3:3.2.1'
+
+  compile 'com.thoughtworks.xstream:xstream:1.4.8'
+
+  provided 'org.sonarsource.sonarqube:sonar-plugin-api:5.2'
+  provided 'org.sonarsource.java:sonar-java-plugin:3.9'
+  provided 'org.sonarsource.dotnet:sonar-csharp-plugin:4.4'
+
+  testCompile 'junit:junit:4.12'
+}
+
+version = '1.0'
+
+sonarPackaging {
+  pluginDir = "$buildDir/myServer"
+  pluginKey = 'example'
+  pluginClass = 'com.example.HelloWorld'
+  pluginName = 'Example'
+  pluginDescription = 'An Example Plugin!'
+}

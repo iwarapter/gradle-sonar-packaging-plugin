@@ -24,6 +24,7 @@
  */
 package com.iadams.gradle.plugins
 
+import com.iadams.gradle.plugins.core.DependencyQuery
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.testfixtures.ProjectBuilder
@@ -87,5 +88,38 @@ class SonarPackagingPluginSpec extends Specification {
     task.getBasePlugin() == 'cheese'
     task.getOrganizationName() == 'cheese'
     task.getOrganizationUrl() == 'cheese'
+  }
+
+  def "we can check plugin dependencies"() {
+    given:
+    project.repositories {jcenter()}
+    project.dependencies {provided 'org.sonarsource.sonarqube:sonar-plugin-api:5.2'}
+    project.dependencies {provided 'org.sonarsource.java:sonar-java-plugin:3.9'}
+    project.dependencies {provided 'org.sonarsource.dotnet:sonar-csharp-plugin:4.4'}
+    project.dependencies {compile 'org.apache.commons:commons-lang3:3.2.1'}
+    project.dependencies {compile 'com.thoughtworks.xstream:xstream:1.4.8'}
+
+    when:
+    DependencyQuery q = new DependencyQuery(project)
+    def r = q.getNotProvidedDependencies()
+
+    then:
+    r.size() == 3
+  }
+
+  def "sonar dependencies are not packaged"() {
+    given:
+    project.repositories {jcenter()}
+    project.dependencies {provided 'org.sonarsource.sonarqube:sonar-plugin-api:5.2'}
+    project.dependencies {provided 'org.sonarsource.java:sonar-java-plugin:3.9'}
+    project.dependencies {provided 'org.sonarsource.dotnet:sonar-csharp-plugin:4.4'}
+    project.dependencies {provided 'org.codehaus.sonar:sonar-plugin-api:2.4'}
+
+    when:
+    DependencyQuery q = new DependencyQuery(project)
+    def r = q.getNotProvidedDependencies()
+
+    then:
+    r.size() == 0
   }
 }

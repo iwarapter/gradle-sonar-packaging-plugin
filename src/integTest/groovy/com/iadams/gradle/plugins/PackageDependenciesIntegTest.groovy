@@ -53,7 +53,7 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
     file('build/libs/example-1.0.jar').exists()
     !dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/commons-lang-2.5.jar")
     !dependencyExists('build/libs/example-1.0.jar', 'META-INF/lib/sonar-plugin-api-2.4.jar')
-    !dependencyExists('build/libs/example-1.0.jar', 'META-INF/lib/sonar-plugin-api-5.2-RC2.jar')
+    !dependencyExists('build/libs/example-1.0.jar', 'META-INF/lib/sonar-plugin-api-5.2.jar')
   }
 
   def "sonar plugins are not packaged"() {
@@ -256,7 +256,7 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
     result.task(":build").outcome == SUCCESS
     file('build/libs/example-1.0.jar').exists()
     dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/grappa-2.0.0-beta.4-all.jar")
-    manifestContains('build/libs/example-1.0.jar', 'Plugin-Dependencies', 'META-INF/lib/grappa-2.0.0-beta.4-all.jar META-INF/lib/asm-debug-all-5.0.3.jar META-INF/lib/jitescript-0.4.0.jar')
+    manifestContains('build/libs/example-1.0.jar', 'Plugin-Dependencies', 'META-INF/lib/grappa-2.0.0-beta.4-all.jar META-INF/lib/jitescript-0.4.0.jar META-INF/lib/asm-debug-all-5.0.3.jar')
   }
 
   def "issue #7"() {
@@ -286,12 +286,12 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
       .withProjectDir(testProjectDir.root)
       .withArguments('build')
       .withPluginClasspath(pluginClasspath)
-      .withDebug(true)
+      .withDebug(false)
       .build()
 
     then:
     result.task(":build").outcome == SUCCESS
     file('build/libs/example-1.0.jar').exists()
-    dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/xtream-1.4.8.jar")
+    !dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/xtream-1.4.8.jar")
   }
 }

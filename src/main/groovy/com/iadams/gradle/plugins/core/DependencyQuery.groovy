@@ -64,11 +64,11 @@ class DependencyQuery {
 
     for (ResolvedDependency it : getDependencies('provided')) {
       if (SONAR_GROUPID_OLD.equals(it.moduleGroup) && SONAR_PLUGIN_API_ARTIFACTID.equals(it.moduleName)
-          && SONAR_PLUGIN_API_TYPE.equals(it.moduleArtifacts[0].type)) {
+        && SONAR_PLUGIN_API_TYPE.equals(it.moduleArtifacts[0].type)) {
         return it
       }
       if (SONAR_GROUPID.equals(it.moduleGroup) && SONAR_PLUGIN_API_ARTIFACTID.equals(it.moduleName)
-          && SONAR_PLUGIN_API_TYPE.equals(it.moduleArtifacts[0].type)) {
+        && SONAR_PLUGIN_API_TYPE.equals(it.moduleArtifacts[0].type)) {
         return it
       }
     }
@@ -87,7 +87,7 @@ class DependencyQuery {
 
     if (sonarApi == null) {
       throw new GradleException(
-          "$SONAR_GROUPID_OLD:$SONAR_PLUGIN_API_ARTIFACTID or $SONAR_GROUPID:$SONAR_PLUGIN_API_ARTIFACTID should be declared in dependencies")
+        "$SONAR_GROUPID_OLD:$SONAR_PLUGIN_API_ARTIFACTID or $SONAR_GROUPID:$SONAR_PLUGIN_API_ARTIFACTID should be declared in dependencies")
     }
   }
 
@@ -153,7 +153,7 @@ class DependencyQuery {
   void retrieveDependencies(ResolvedDependency dependency, String configuration, List<ResolvedDependency> result) {
 
     result.add(dependency)
-    dependency.getChildren().each { child ->
+    dependency.getChildren().each {child ->
       if (child.getConfiguration() == configuration || child.getConfiguration() == 'default') {
         retrieveDependencies(child, configuration, result)
       }
@@ -171,9 +171,9 @@ class DependencyQuery {
     if (comp != null) {
 
       def result = project.dependencies.createArtifactResolutionQuery()
-          .forComponents(comp)
-          .withArtifacts(MavenModule, MavenPomArtifact)
-          .execute()
+        .forComponents(comp)
+        .withArtifacts(MavenModule, MavenPomArtifact)
+        .execute()
 
       for (component in result.resolvedComponents) {
         for (art in component.getArtifacts(MavenPomArtifact)) {
@@ -191,15 +191,13 @@ class DependencyQuery {
    *
    * @return
    */
-  List<ResolvedDependency> getSonarProvidedArtifacts() {
-    List<ResolvedDependency> myList = []
+  Set<ResolvedDependency> getSonarProvidedArtifacts() {
+    Set<ResolvedDependency> setOfDependencies = []
+
     project.configurations.provided.resolvedConfiguration.getFirstLevelModuleDependencies().each {
-      searchForSonarProvidedDependencies(it, myList, false)
+      searchForSonarProvidedDependencies(it, setOfDependencies, true)
     }
-    project.configurations.compile.resolvedConfiguration.getFirstLevelModuleDependencies().each {
-      searchForSonarProvidedDependencies(it, myList, false)
-    }
-    return myList.unique()
+    return setOfDependencies
   }
 
   /**
@@ -207,13 +205,11 @@ class DependencyQuery {
    *
    * @return
    */
-  List<ResolvedDependency> getNotProvidedDependencies() {
-    List<ResolvedDependency> result = []
-    List<ResolvedDependency> providedArtifacts = getSonarProvidedArtifacts();
-    providedArtifacts += getAllDependencies('provided')
-    providedArtifacts.unique()
+  Set<ResolvedDependency> getNotProvidedDependencies() {
+    Set<ResolvedDependency> result = new HashSet<>()
+    Set<ResolvedDependency> providedArtifacts = getSonarProvidedArtifacts();
 
-    List<ResolvedDependency> allDeps = getAllDependencies('compile')
+    Set<ResolvedDependency> allDeps = getAllDependencies('compile').toSet()
 
     for (dep in allDeps) {
       boolean include = true
@@ -229,7 +225,7 @@ class DependencyQuery {
         result.add(dep)
       }
     }
-    return result.unique { a, b -> (a.moduleGroup <=> b.moduleGroup ?: a.moduleName <=> b.moduleName ?: a.moduleVersion <=> b.moduleVersion) }
+    return result
   }
 
   /**
@@ -240,10 +236,10 @@ class DependencyQuery {
    * @param sonarDeps
    * @param isParentProvided
    */
-  void searchForSonarProvidedDependencies(ResolvedDependency dependency, List<ResolvedDependency> sonarDeps, boolean isParentProvided) {
+  void searchForSonarProvidedDependencies(ResolvedDependency dependency, Set<ResolvedDependency> sonarDeps, boolean isParentProvided) {
     if (dependency != null) {
       boolean provided
-      if (dependency.getParents().findAll { it.configuration.equals('compile') } != null) {
+      if (dependency.getParents().findAll {it.configuration.equals('compile')} != null) {
         provided = isParentProvided || (SONAR_GROUPID_OLD.equals(dependency.moduleGroup)) || (SONAR_GROUPID.equals(dependency.moduleGroup))
       } else {
         provided = isParentProvided
@@ -263,15 +259,14 @@ class DependencyQuery {
   /**
    * Check a given list of dependencies for the presence of one, by comparing group, name, version.
    *
-   * @param list
+   * @param dependencies
    * @param dep
    * @return
    */
-  private boolean containsDependency(List<ResolvedDependency> list, ResolvedDependency dep) {
-    for (it in list) {
+  private static boolean containsDependency(Set<ResolvedDependency> dependencies, ResolvedDependency dep) {
+    for (it in dependencies) {
       if (it.moduleGroup == dep.moduleGroup &&
-          it.moduleName == dep.moduleName &&
-          it.moduleVersion == dep.moduleVersion) {
+        it.moduleName == dep.moduleName) {
         return true
       }
     }

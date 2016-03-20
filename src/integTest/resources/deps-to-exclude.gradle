@@ -8,7 +8,7 @@ repositories {
 
 dependencies {
   provided 'org.codehaus.sonar:sonar-plugin-api:2.4'
-  compile "org.sonarsource.sonarqube:sonar-plugin-api:5.2-RC2"
+  provided "org.sonarsource.sonarqube:sonar-plugin-api:5.2"
   compile 'commons-lang:commons-lang:2.5'
 }
 
