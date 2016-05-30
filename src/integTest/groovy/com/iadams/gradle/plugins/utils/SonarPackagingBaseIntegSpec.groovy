@@ -63,7 +63,7 @@ class SonarPackagingBaseIntegSpec extends Specification {
    */
   void manifestContains(String buildJar, String key, String value) {
     JarFile jarFile = new JarFile(file(buildJar).absolutePath)
-    assert jarFile.manifest.mainAttributes.getValue(key) == value
+    assert jarFile.manifest.mainAttributes.getValue(key).contains(value)
   }
 
   /**

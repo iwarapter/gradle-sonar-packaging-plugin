@@ -32,6 +32,9 @@ import com.iadams.gradle.plugins.tasks.SonarPluginDeployTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.plugins.MavenPlugin
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.publish.plugins.PublishingPlugin
 
 /**
  * Created by iwarapter
@@ -56,6 +59,9 @@ class SonarPackagingPlugin implements Plugin<Project> {
     project.configurations.compile.extendsFrom(project.configurations.getByName('provided'))
 
     addTasks(project)
+
+    configureMavenPublishPlugin(project)
+    configureMavenPlugin(project)
   }
 
   /**
@@ -70,23 +76,23 @@ class SonarPackagingPlugin implements Plugin<Project> {
       description = 'Updates the Jar file with the correct dependencies and manifest info.'
       group = SONAR_PACKAGING_GROUP
 
-      conventionMapping.pluginClass = { extension.pluginClass }
-      conventionMapping.pluginDescription = { extension.pluginDescription }
-      conventionMapping.pluginDevelopers = { extension.pluginDevelopers }
-      conventionMapping.pluginUrl = { extension.pluginUrl }
-      conventionMapping.pluginIssueTrackerUrl = { extension.pluginIssueTrackerUrl }
-      conventionMapping.pluginKey = { extension.pluginKey }
-      conventionMapping.pluginLicense = { extension.pluginLicense }
-      conventionMapping.pluginName = { extension.pluginName }
-      conventionMapping.organizationName = { extension.organization.name }
-      conventionMapping.organizationUrl = { extension.organization.url }
-      conventionMapping.pluginSourceUrl = { extension.pluginSourceUrl }
-      conventionMapping.pluginTermsConditionsUrl = { extension.pluginTermsConditionsUrl }
-      conventionMapping.useChildFirstClassLoader = { extension.useChildFirstClassLoader }
-      conventionMapping.pluginParent = { extension.pluginParent }
-      conventionMapping.requirePlugins = { extension.requirePlugins }
-      conventionMapping.basePlugin = { extension.basePlugin }
-      conventionMapping.skipDependenciesPackaging = { extension.skipDependenciesPackaging }
+      conventionMapping.pluginClass = {extension.pluginClass}
+      conventionMapping.pluginDescription = {extension.pluginDescription}
+      conventionMapping.pluginDevelopers = {extension.pluginDevelopers}
+      conventionMapping.pluginUrl = {extension.pluginUrl}
+      conventionMapping.pluginIssueTrackerUrl = {extension.pluginIssueTrackerUrl}
+      conventionMapping.pluginKey = {extension.pluginKey}
+      conventionMapping.pluginLicense = {extension.pluginLicense}
+      conventionMapping.pluginName = {extension.pluginName}
+      conventionMapping.organizationName = {extension.organization.name}
+      conventionMapping.organizationUrl = {extension.organization.url}
+      conventionMapping.pluginSourceUrl = {extension.pluginSourceUrl}
+      conventionMapping.pluginTermsConditionsUrl = {extension.pluginTermsConditionsUrl}
+      conventionMapping.useChildFirstClassLoader = {extension.useChildFirstClassLoader}
+      conventionMapping.pluginParent = {extension.pluginParent}
+      conventionMapping.requirePlugins = {extension.requirePlugins}
+      conventionMapping.basePlugin = {extension.basePlugin}
+      conventionMapping.skipDependenciesPackaging = {extension.skipDependenciesPackaging}
     }
 
     project.tasks.findByName('jar').finalizedBy SONAR_PACKAGING_TASK
@@ -95,7 +101,7 @@ class SonarPackagingPlugin implements Plugin<Project> {
       description = 'Copies the built plugin to the local server.'
       group = SONAR_PACKAGING_GROUP
 
-      conventionMapping.localServer = { project.file(extension.pluginDir) }
+      conventionMapping.localServer = {project.file(extension.pluginDir)}
       conventionMapping.pluginJar = {
         project.file("${project.libsDir}/${project.archivesBaseName}-${project.version}.jar")
       }
@@ -105,8 +111,34 @@ class SonarPackagingPlugin implements Plugin<Project> {
       description = 'Restarts a SonarQube server running in dev mode.'
       group = SONAR_PACKAGING_GROUP
 
-      conventionMapping.serverUrl = { extension.serverUrl }
-      conventionMapping.restartApiPath = { extension.restartApiPath }
+      conventionMapping.serverUrl = {extension.serverUrl}
+      conventionMapping.restartApiPath = {extension.restartApiPath}
+    }
+  }
+
+  static void configureMavenPublishPlugin(Project project) {
+    project.plugins.withType(PublishingPlugin) {PublishingPlugin publishingPlugin ->
+      project.publishing {
+        publications.withType(MavenPublication) {
+          MavenPublication publication ->
+            publication.pom.withXml {
+              it.asNode().appendNode('packaging', 'sonar-plugin')
+            }
+        }
+      }
+    }
+  }
+
+  private static void configureMavenPlugin(Project project) {
+    project.plugins.withType(MavenPlugin) {
+      // Requires user definition of Maven installer/deployer which could be anywhere in the build script
+      project.afterEvaluate {
+        def installer = project.tasks.install.repositories.mavenInstaller
+        def deployer = project.tasks.uploadArchives.repositories.mavenDeployer
+        [installer, deployer]*.pom*.whenConfigured {pom ->
+          pom.packaging = 'sonar-plugin'
+        }
+      }
     }
   }
 }

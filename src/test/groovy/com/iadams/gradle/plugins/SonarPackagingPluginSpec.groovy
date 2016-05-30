@@ -113,7 +113,6 @@ class SonarPackagingPluginSpec extends Specification {
     project.dependencies {provided 'org.sonarsource.sonarqube:sonar-plugin-api:5.2'}
     project.dependencies {provided 'org.sonarsource.java:sonar-java-plugin:3.9'}
     project.dependencies {provided 'org.sonarsource.dotnet:sonar-csharp-plugin:4.4'}
-    project.dependencies {provided 'org.codehaus.sonar:sonar-plugin-api:2.4'}
 
     when:
     DependencyQuery q = new DependencyQuery(project)
@@ -121,5 +120,25 @@ class SonarPackagingPluginSpec extends Specification {
 
     then:
     r.size() == 0
+  }
+
+  def "provided dependencies are not included"() {
+    given:
+    project.repositories {jcenter()}
+    project.dependencies {provided 'org.sonarsource.sonarqube:sonar-plugin-api:5.2'}
+    project.dependencies {compile 'org.codehaus.sonar.sslr:sslr-core:1.20'}
+    project.dependencies {compile 'org.codehaus.sonar.sslr-squid-bridge:sslr-squid-bridge:2.5.3'}
+
+    when:
+    DependencyQuery q = new DependencyQuery(project)
+    def r = q.getNotProvidedDependencies()
+
+    then:
+    r.find{ it.toString().contains('org.codehaus.sonar.sslr-squid-bridge:sslr-squid-bridge:2.5.3')}
+    r.find{ it.toString().contains('org.codehaus.sonar.sslr:sslr-core:1.20')}
+    r.find{ it.toString().contains('org.codehaus.sonar.sslr:sslr-xpath:1.20')}
+    r.find{ it.toString().contains('jaxen')}
+    r.find{ it.toString().contains('picocontainer')}
+    r.size() == 5
   }
 }
