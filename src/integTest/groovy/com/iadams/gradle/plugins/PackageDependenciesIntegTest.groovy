@@ -294,4 +294,20 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
     file('build/libs/example-1.0.jar').exists()
     !dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/xtream-1.4.8.jar")
   }
+
+  def "build with api over 5.5 passes"() {
+    given:
+    copyResources('api-greater-than-5.5.gradle', 'build.gradle')
+
+    when:
+    def result = GradleRunner.create()
+            .withProjectDir(testProjectDir.root)
+            .withArguments('build')
+            .withPluginClasspath(pluginClasspath)
+            .build()
+
+    then:
+    result.task(':build').outcome == SUCCESS
+    file('build/libs/example-1.0.jar').exists()
+  }
 }

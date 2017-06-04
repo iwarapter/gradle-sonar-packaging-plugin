@@ -24,7 +24,7 @@
  */
 package com.iadams.gradle.plugins.utils
 
-import org.apache.commons.io.FileUtils
+import org.gradle.internal.impldep.org.apache.commons.io.FileUtils
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification

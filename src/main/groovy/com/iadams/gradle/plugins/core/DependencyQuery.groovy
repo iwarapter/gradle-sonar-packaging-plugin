@@ -26,6 +26,7 @@ package com.iadams.gradle.plugins.core
 
 import org.gradle.api.GradleException
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.maven.MavenModule
 import org.gradle.maven.MavenPomArtifact
@@ -135,12 +136,12 @@ class DependencyQuery {
    * @param configuration
    * @return
    */
-  List<ResolvedDependency> getAllDependencies(String configuration) {
-    List<ResolvedDependency> allDeps = []
+  Set<ResolvedDependency> getAllDependencies(String configuration) {
+    Set<ResolvedDependency> allDeps = []
     project.configurations.getByName(configuration).resolvedConfiguration.firstLevelModuleDependencies.each {
       retrieveDependencies(it, configuration, allDeps)
     }
-    return allDeps.unique()
+    return allDeps.unique { a, b -> (a.moduleGroup <=> b.moduleGroup ?: a.moduleName <=> b.moduleName ?: a.moduleVersion <=> b.moduleVersion) }
   }
 
   /**
@@ -150,13 +151,13 @@ class DependencyQuery {
    * @param configuration
    * @param result
    */
-  void retrieveDependencies(ResolvedDependency dependency, String configuration, List<ResolvedDependency> result) {
+  void retrieveDependencies(ResolvedDependency dependency, String configuration, Set<ResolvedDependency> result) {
 
     result.add(dependency)
     dependency.getChildren().each {child ->
-      if (child.getConfiguration() == configuration || child.getConfiguration() == 'default') {
+//      if (child.getConfiguration() == configuration || child.getConfiguration() == 'default') {
         retrieveDependencies(child, configuration, result)
-      }
+//      }
     }
   }
 
@@ -197,6 +198,10 @@ class DependencyQuery {
     project.configurations.provided.resolvedConfiguration.getFirstLevelModuleDependencies().each {
       searchForSonarProvidedDependencies(it, setOfDependencies, true)
     }
+
+    (project.configurations.compile.resolvedConfiguration.firstLevelModuleDependencies - project.configurations.provided.resolvedConfiguration.firstLevelModuleDependencies).each {
+      searchForSonarProvidedDependencies(it, setOfDependencies, false)
+    }
     return setOfDependencies
   }
 
@@ -207,9 +212,11 @@ class DependencyQuery {
    */
   Set<ResolvedDependency> getNotProvidedDependencies() {
     Set<ResolvedDependency> result = new HashSet<>()
-    Set<ResolvedDependency> providedArtifacts = getSonarProvidedArtifacts();
+    Set<ResolvedDependency> sonarProvidedArtifacts = getSonarProvidedArtifacts()
+    Set<ResolvedDependency> providedArtifacts = getAllDependencies('provided')
 
-    Set<ResolvedDependency> allDeps = getAllDependencies('compile').toSet()
+    Set<ResolvedDependency> allDeps = getAllDependencies('runtime')
+    allDeps.removeAll{ containsDependency(providedArtifacts, it) }
 
     for (dep in allDeps) {
       boolean include = true
@@ -217,7 +224,7 @@ class DependencyQuery {
         project.logger.debug("${dep.module.id.toString()} is a SonarQube plugin and will not be packaged in your plugin")
         include = false
       }
-      if (containsDependency(providedArtifacts, dep)) {
+      if (containsDependency(sonarProvidedArtifacts, dep)) {
         project.logger.debug(dep.name + " is provided by SonarQube plugin API and will not be packaged in your plugin")
         include = false
       }
@@ -225,7 +232,7 @@ class DependencyQuery {
         result.add(dep)
       }
     }
-    return result
+    return result.unique { a, b -> (a.moduleGroup <=> b.moduleGroup ?: a.moduleName <=> b.moduleName ?: a.moduleVersion <=> b.moduleVersion) }
   }
 
   /**
@@ -239,8 +246,8 @@ class DependencyQuery {
   void searchForSonarProvidedDependencies(ResolvedDependency dependency, Set<ResolvedDependency> sonarDeps, boolean isParentProvided) {
     if (dependency != null) {
       boolean provided
-      if (dependency.getParents().findAll {it.configuration.equals('compile')} != null) {
-        provided = isParentProvided || (SONAR_GROUPID_OLD.equals(dependency.moduleGroup)) || (SONAR_GROUPID.equals(dependency.moduleGroup))
+      if (dependency.getParents() != null) {
+        provided = isParentProvided || SONAR_GROUPID_OLD == dependency.moduleGroup || SONAR_GROUPID == dependency.moduleGroup
       } else {
         provided = isParentProvided
       }
@@ -249,7 +256,7 @@ class DependencyQuery {
       }
 
       for (child in dependency.getChildren()) {
-        if (child.getConfiguration().equals('compile')) {
+        if (child.getConfiguration() == 'compile') {
           searchForSonarProvidedDependencies(child, sonarDeps, provided)
         }
       }
