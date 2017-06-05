@@ -93,6 +93,8 @@ class SonarPackagingPlugin implements Plugin<Project> {
       conventionMapping.requirePlugins = {extension.requirePlugins}
       conventionMapping.basePlugin = {extension.basePlugin}
       conventionMapping.skipDependenciesPackaging = {extension.skipDependenciesPackaging}
+      conventionMapping.sonarLintSupported = {extension.sonarLintSupported}
+      conventionMapping.sonarQubeMinVersion = {extension.sonarQubeMinVersion}
     }
 
     project.tasks.findByName('jar').finalizedBy SONAR_PACKAGING_TASK

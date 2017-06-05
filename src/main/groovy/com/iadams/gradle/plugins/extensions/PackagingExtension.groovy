@@ -53,6 +53,10 @@ class PackagingExtension {
 
   String pluginClass
 
+  boolean sonarLintSupported = false
+
+  String sonarQubeMinVersion = null
+
   String pluginName
 
   String pluginDescription

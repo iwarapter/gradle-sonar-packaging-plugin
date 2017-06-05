@@ -1,0 +1,24 @@
+plugins {
+  id 'com.iadams.sonar-packaging'
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  provided 'org.codehaus.sonar:sonar-plugin-api:4.5.2'
+  compile 'org.codehaus.sonar.sslr:sslr-core:1.20'
+  compile 'org.codehaus.sonar.sslr-squid-bridge:sslr-squid-bridge:2.5.3'
+}
+
+version = '1.0'
+
+sonarPackaging {
+  pluginDir = "$buildDir/myServer"
+  pluginKey = 'example'
+  pluginClass = 'com.example.HelloWorld'
+  pluginName = 'Example'
+  pluginDescription = 'An Example Plugin!'
+  sonarQubeMinVersion = '4.4.0'
+}

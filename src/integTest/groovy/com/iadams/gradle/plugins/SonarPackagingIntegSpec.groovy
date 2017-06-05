@@ -172,4 +172,40 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
     result.task(":pluginPackaging").outcome == FAILED
     result.output.contains('Plugin key is badly formatted. Please use ascii letters and digits only: ')
   }
+
+  def 'setup a plugin for sonarLint'() {
+    setup:
+    writeHelloWorld('com.example')
+    copyResources('sonarlint.gradle', 'build.gradle')
+    settingsFile << '''rootProject.name="example"'''
+
+    when:
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withArguments('build')
+        .withPluginClasspath(pluginClasspath)
+        .build()
+
+    then:
+    result.task(":build").outcome == SUCCESS
+    manifestContains('build/libs/example-1.0.jar', 'SonarLint-Supported', 'true')
+  }
+
+  def 'we can define the minimum sonarqube version'() {
+    setup:
+    writeHelloWorld('com.example')
+    copyResources('sonarQubeMinVersion.gradle', 'build.gradle')
+    settingsFile << '''rootProject.name="example"'''
+
+    when:
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withArguments('build')
+        .withPluginClasspath(pluginClasspath)
+        .build()
+
+    then:
+    result.task(":build").outcome == SUCCESS
+    manifestContains('build/libs/example-1.0.jar', 'Sonar-Version', '4.4.0')
+  }
 }

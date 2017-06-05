@@ -85,6 +85,13 @@ class PackagePluginTask extends Jar {
   String pluginTermsConditionsUrl
 
   @Input
+  boolean sonarLintSupported
+
+  @Input
+  @Optional
+  String sonarQubeMinVersion
+
+  @Input
   @Optional
   Boolean useChildFirstClassLoader
 
@@ -138,7 +145,8 @@ class PackagePluginTask extends Jar {
         "Plugin-SourcesUrl": getPluginSourceUrl(),
         "Plugin-TermsConditionsUrl": getPluginTermsConditionsUrl(),
         "Plugin-Version": project.version,
-        "Sonar-Version": new DependencyQuery(project).sonarPluginApiArtifact.moduleVersion)
+        "SonarLint-Supported": getSonarLintSupported(),
+        "Sonar-Version": getSonarQubeMinVersion() ?: new DependencyQuery(project).sonarPluginApiArtifact.moduleVersion)
     }
 
     /**
