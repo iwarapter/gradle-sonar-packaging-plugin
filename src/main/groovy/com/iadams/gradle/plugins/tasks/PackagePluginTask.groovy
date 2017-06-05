@@ -28,7 +28,6 @@ import com.iadams.gradle.plugins.core.DependencyQuery
 import com.iadams.gradle.plugins.core.PluginKeyUtils
 import org.gradle.api.GradleException
 import org.gradle.api.artifacts.ResolvedDependency
-import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
@@ -112,7 +111,6 @@ class PackagePluginTask extends Jar {
 
   @TaskAction
   protected void copy() {
-    logging.level = LogLevel.INFO
 
     checkMandatoryAttributes()
 
@@ -123,8 +121,8 @@ class PackagePluginTask extends Jar {
       query.checkForDependencies(GWT_ARTIFACT_IDS)
     }
 
-    logger.info "-------------------------------------------------------"
-    logger.info "Plugin definition in update center"
+    logger.lifecycle "-------------------------------------------------------"
+    logger.lifecycle "Plugin definition in update center"
     //manifest = new PluginManifest()
     manifest {
       attributes("Created-By": "Gradle",
@@ -165,7 +163,7 @@ class PackagePluginTask extends Jar {
       manifest.attributes.put("Plugin-Base", getBasePlugin())
     }
 
-    getLogger().info '-------------------------------------------------------'
+    logger.lifecycle '-------------------------------------------------------'
 
     checkParentAndRequiresPluginProperties()
 
@@ -182,10 +180,10 @@ class PackagePluginTask extends Jar {
       manifest.attributes.put("Plugin-Dependencies", deps.collect {"META-INF/lib/${it}"}.join(' '))
 
       if (dependencies.size() > 0) {
-        logger.info "Following dependencies are packaged in the plugin:\n"
+        logger.lifecycle "Following dependencies are packaged in the plugin:\n"
         dependencies.each {logger.info "\t${it.moduleGroup}:${it.moduleName}:${it.moduleVersion}"}
-        logger.info "\nSee following page for more details about plugin dependencies:\n"
-        logger.info "\thttp://docs.sonarqube.org/display/DEV/Coding+a+Plugin\n"
+        logger.lifecycle "\nSee following page for more details about plugin dependencies:\n"
+        logger.lifecycle "\thttp://docs.sonarqube.org/display/DEV/Coding+a+Plugin\n"
       }
 
       from project.sourceSets.main.output
@@ -199,9 +197,7 @@ class PackagePluginTask extends Jar {
     }
 
     super.copy()
-    getLogger().info('Sonar Plugin Created.')
-
-    logging.level = LogLevel.LIFECYCLE
+    logger.lifecycle 'Sonar Plugin Created.'
   }
 
   /**
