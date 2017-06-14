@@ -310,4 +310,21 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
     result.task(':build').outcome == SUCCESS
     file('build/libs/example-1.0.jar').exists()
   }
+
+  def "build with api over 5.6 passes in compileOnly"() {
+    given:
+    copyResources('build-with-api-compileOnly.gradle', 'build.gradle')
+
+    when:
+    def result = GradleRunner.create()
+        .withProjectDir(testProjectDir.root)
+        .withArguments('build')
+        .withPluginClasspath(pluginClasspath)
+        .withDebug(true)
+        .build()
+
+    then:
+    result.task(':build').outcome == SUCCESS
+    file('build/libs/example-1.0.jar').exists()
+  }
 }

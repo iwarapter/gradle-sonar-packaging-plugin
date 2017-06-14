@@ -63,7 +63,9 @@ class DependencyQuery {
    */
   final ResolvedDependency getSonarPluginApiArtifact() {
 
-    for (ResolvedDependency it : getDependencies('provided')) {
+    Set<ResolvedDependency> dependencies = getDependencies('compileOnly')
+    dependencies.addAll(getDependencies('provided'))
+    for (ResolvedDependency it : dependencies) {
       if (SONAR_GROUPID_OLD.equals(it.moduleGroup) && SONAR_PLUGIN_API_ARTIFACTID.equals(it.moduleName)
         && SONAR_PLUGIN_API_TYPE.equals(it.moduleArtifacts[0].type)) {
         return it

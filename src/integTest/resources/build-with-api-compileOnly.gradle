@@ -1,0 +1,19 @@
+plugins {
+  id 'com.iadams.sonar-packaging'
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compileOnly "org.sonarsource.sonarqube:sonar-plugin-api:5.6"
+}
+
+sonarPackaging {
+  pluginDir = "$buildDir/myServer"
+  pluginKey = 'example'
+  pluginClass = 'org.sonar.plugins.sample.SamplePlugin'
+  pluginName = 'Example'
+  pluginDescription = 'An Example Plugin!'
+}

@@ -141,4 +141,24 @@ class SonarPackagingPluginSpec extends Specification {
     r.find{ it.toString().contains('picocontainer')}
     r.size() == 5
   }
+
+  def "compileOnly dependencies are not included"() {
+    given:
+    project.repositories {jcenter()}
+    project.dependencies {compileOnly 'org.sonarsource.sonarqube:sonar-plugin-api:5.2'}
+    project.dependencies {compile 'org.codehaus.sonar.sslr:sslr-core:1.20'}
+    project.dependencies {compile 'org.codehaus.sonar.sslr-squid-bridge:sslr-squid-bridge:2.5.3'}
+
+    when:
+    DependencyQuery q = new DependencyQuery(project)
+    def r = q.getNotProvidedDependencies()
+
+    then:
+    r.find{ it.toString().contains('org.codehaus.sonar.sslr-squid-bridge:sslr-squid-bridge:2.5.3')}
+    r.find{ it.toString().contains('org.codehaus.sonar.sslr:sslr-core:1.20')}
+    r.find{ it.toString().contains('org.codehaus.sonar.sslr:sslr-xpath:1.20')}
+    r.find{ it.toString().contains('jaxen')}
+    r.find{ it.toString().contains('picocontainer')}
+    r.size() == 5
+  }
 }
