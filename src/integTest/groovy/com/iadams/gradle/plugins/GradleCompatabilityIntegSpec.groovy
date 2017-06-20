@@ -48,6 +48,7 @@ class GradleCompatabilityIntegSpec extends SonarPackagingBaseIntegSpec {
         .withGradleVersion(gradleVersion)
         .withArguments('build', '--s')
         .withPluginClasspath(pluginClasspath)
+        .withDebug(true)
         .build()
 
     then:
@@ -59,6 +60,6 @@ class GradleCompatabilityIntegSpec extends SonarPackagingBaseIntegSpec {
 
     where:
     //using the new framework
-    gradleVersion << ['2.12', '2.13', '2.14']
+    gradleVersion << ['3.0', '3.1', '3.2', '3.3', '3.4', '3.5', '4.0']
   }
 }

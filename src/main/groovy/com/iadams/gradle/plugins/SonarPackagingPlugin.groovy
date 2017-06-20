@@ -24,6 +24,7 @@
  */
 package com.iadams.gradle.plugins
 
+import com.iadams.gradle.plugins.core.DependencyQuery
 import com.iadams.gradle.plugins.extensions.PackagingExtension
 import com.iadams.gradle.plugins.extensions.PackagingOrganizationExtension
 import com.iadams.gradle.plugins.tasks.PackagePluginTask
@@ -31,6 +32,7 @@ import com.iadams.gradle.plugins.tasks.SonarApiRestartTask
 import com.iadams.gradle.plugins.tasks.SonarPluginDeployTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.MavenPlugin
 import org.gradle.api.publish.maven.MavenPublication
@@ -45,6 +47,7 @@ class SonarPackagingPlugin implements Plugin<Project> {
   static final SONAR_PACKAGING_EXTENSION = 'sonarPackaging'
   static final SONAR_PACKAGING_ORGANIZATION_EXTENSION = 'organization'
   static final SONAR_PACKAGING_TASK = 'pluginPackaging'
+  static final SONAR_PACKAGING_CONFIGURE_TASK = 'configurePluginPackaging'
   static final SONAR_PLUGIN_LOCAL_DEPLOY_TASK = 'localDeploy'
   static final SONAR_API_RESTART_TASK = 'restartServer'
 
@@ -72,6 +75,21 @@ class SonarPackagingPlugin implements Plugin<Project> {
   void addTasks(Project project) {
     def extension = project.extensions.findByName(SONAR_PACKAGING_EXTENSION)
 
+    project.task(SONAR_PACKAGING_CONFIGURE_TASK){
+      doLast {
+        project.configure(project.tasks."$SONAR_PACKAGING_TASK") {
+          from project.sourceSets.main.output
+          into('META-INF/lib') {
+            List<File> artifacts = []
+            new DependencyQuery(project).getNotProvidedDependencies().each { ResolvedDependency dep ->
+              dep.getModuleArtifacts().each { artifacts.add(it.getFile().absoluteFile) }
+            }
+            from artifacts
+          }
+        }
+      }
+    }
+
     project.task(SONAR_PACKAGING_TASK, type: PackagePluginTask) {
       description = 'Updates the Jar file with the correct dependencies and manifest info.'
       group = SONAR_PACKAGING_GROUP
@@ -98,6 +116,7 @@ class SonarPackagingPlugin implements Plugin<Project> {
     }
 
     project.tasks.findByName('jar').finalizedBy SONAR_PACKAGING_TASK
+    project.tasks.findByName(SONAR_PACKAGING_TASK).dependsOn SONAR_PACKAGING_CONFIGURE_TASK
 
     project.task(SONAR_PLUGIN_LOCAL_DEPLOY_TASK, type: SonarPluginDeployTask) {
       description = 'Copies the built plugin to the local server.'

@@ -126,25 +126,25 @@ class PackagePluginTask extends Jar {
     //manifest = new PluginManifest()
     manifest {
       attributes("Created-By": "Gradle",
-        "Built-By": System.getProperty('user.name'),
-        "Build-Jdk": System.getProperty('java.version'),
-        "Build-Time": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-        "Plugin-BuildDate": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-        "Plugin-Class": getPluginClass(),
-        "Plugin-Description": getPluginDescription(),
-        "Plugin-Developers": getPluginDevelopers(),
-        "Plugin-Homepage": getPluginUrl(),
-        "Plugin-IssueTrackerUrl": getPluginIssueTrackerUrl(),
-        "Plugin-Key": getPluginKey(),
-        "Plugin-License": getPluginLicense(),
-        "Plugin-Name": getPluginName(),
-        "Plugin-Organization": getOrganizationName(),
-        "Plugin-OrganizationUrl": getOrganizationUrl(),
-        "Plugin-SourcesUrl": getPluginSourceUrl(),
-        "Plugin-TermsConditionsUrl": getPluginTermsConditionsUrl(),
-        "Plugin-Version": project.version,
-        "SonarLint-Supported": getSonarLintSupported(),
-        "Sonar-Version": getSonarQubeMinVersion() ?: new DependencyQuery(project).sonarPluginApiArtifact.moduleVersion)
+          "Built-By": System.getProperty('user.name'),
+          "Build-Jdk": System.getProperty('java.version'),
+          "Build-Time": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+          "Plugin-BuildDate": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+          "Plugin-Class": getPluginClass(),
+          "Plugin-Description": getPluginDescription(),
+          "Plugin-Developers": getPluginDevelopers(),
+          "Plugin-Homepage": getPluginUrl(),
+          "Plugin-IssueTrackerUrl": getPluginIssueTrackerUrl(),
+          "Plugin-Key": getPluginKey(),
+          "Plugin-License": getPluginLicense(),
+          "Plugin-Name": getPluginName(),
+          "Plugin-Organization": getOrganizationName(),
+          "Plugin-OrganizationUrl": getOrganizationUrl(),
+          "Plugin-SourcesUrl": getPluginSourceUrl(),
+          "Plugin-TermsConditionsUrl": getPluginTermsConditionsUrl(),
+          "Plugin-Version": project.version,
+          "SonarLint-Supported": getSonarLintSupported(),
+          "Sonar-Version": getSonarQubeMinVersion() ?: new DependencyQuery(project).sonarPluginApiArtifact.moduleVersion)
     }
 
     /**
@@ -177,23 +177,15 @@ class PackagePluginTask extends Jar {
         deps.add("${it.moduleName}-${it.moduleVersion}${classifier}.jar")
       }
 
-      manifest.attributes.put("Plugin-Dependencies", deps.collect {"META-INF/lib/${it}"}.join(' '))
+      manifest.attributes.put("Plugin-Dependencies", deps.collect { "META-INF/lib/${it}" }.join(' '))
 
       if (dependencies.size() > 0) {
         logger.lifecycle "Following dependencies are packaged in the plugin:\n"
-        dependencies.each {logger.info "\t${it.moduleGroup}:${it.moduleName}:${it.moduleVersion}"}
+        dependencies.each { logger.info "\t${it.moduleGroup}:${it.moduleName}:${it.moduleVersion}" }
         logger.lifecycle "\nSee following page for more details about plugin dependencies:\n"
         logger.lifecycle "\thttp://docs.sonarqube.org/display/DEV/Coding+a+Plugin\n"
       }
 
-      from project.sourceSets.main.output
-      into('META-INF/lib') {
-        List<File> artifacts = []
-        dependencies.each {ResolvedDependency dep ->
-          dep.getModuleArtifacts().each {artifacts.add(it.getFile().absoluteFile)}
-        }
-        from artifacts
-      }
     }
 
     super.copy()
