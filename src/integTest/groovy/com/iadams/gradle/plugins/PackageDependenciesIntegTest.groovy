@@ -256,7 +256,9 @@ class PackageDependenciesIntegTest extends SonarPackagingBaseIntegSpec {
     result.task(":build").outcome == SUCCESS
     file('build/libs/example-1.0.jar').exists()
     dependencyExists('build/libs/example-1.0.jar', "META-INF/lib/grappa-2.0.0-beta.4-all.jar")
-    manifestContains('build/libs/example-1.0.jar', 'Plugin-Dependencies', 'META-INF/lib/grappa-2.0.0-beta.4-all.jar META-INF/lib/jitescript-0.4.0.jar META-INF/lib/asm-debug-all-5.0.3.jar')
+    manifestContains('build/libs/example-1.0.jar', 'Plugin-Dependencies', 'META-INF/lib/grappa-2.0.0-beta.4-all.jar')
+    manifestContains('build/libs/example-1.0.jar', 'Plugin-Dependencies', 'META-INF/lib/jitescript-0.4.0.jar')
+    manifestContains('build/libs/example-1.0.jar', 'Plugin-Dependencies', 'META-INF/lib/asm-debug-all-5.0.3.jar')
   }
 
   def "issue #7"() {

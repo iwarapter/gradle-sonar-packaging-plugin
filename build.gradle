@@ -30,3 +30,12 @@ pluginBundle {
     }
   }
 }
+
+integTest {
+  minHeapSize = '128m'
+  maxHeapSize = '256m'
+  testLogging {
+    events 'started', 'failed', 'passed', 'skipped'
+    exceptionFormat "full"
+  }
+}
