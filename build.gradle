@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'com.iadams.plugins'
-version = '1.0-SNAPSHOT'
+version = '1.0-RC1'
 description = 'Gradle plugin for packaging SonarQube plugins.'
 
 sourceCompatibility = 1.6
