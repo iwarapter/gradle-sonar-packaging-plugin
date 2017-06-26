@@ -43,6 +43,7 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
         .withProjectDir(testProjectDir.root)
         .withArguments('tasks')
         .withPluginClasspath(pluginClasspath)
+        .withGradleVersion(gradleVersion())
         .build()
 
     then:
@@ -63,6 +64,7 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
         .withProjectDir(testProjectDir.root)
         .withArguments('build', 'localDeploy')
         .withPluginClasspath(pluginClasspath)
+        .withGradleVersion(gradleVersion())
         .build()
 
     then:
@@ -83,6 +85,7 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
         .withProjectDir(testProjectDir.root)
         .withArguments('build', 'localDeploy')
         .withPluginClasspath(pluginClasspath)
+        .withGradleVersion(gradleVersion())
         .build()
 
     then:
@@ -94,6 +97,7 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
         .withProjectDir(testProjectDir.root)
         .withArguments('localDeploy')
         .withPluginClasspath(pluginClasspath)
+        .withGradleVersion(gradleVersion())
         .build()
 
     then:
@@ -111,6 +115,7 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
         .withProjectDir(testProjectDir.root)
         .withArguments('build')
         .withPluginClasspath(pluginClasspath)
+        .withGradleVersion(gradleVersion())
         .build()
 
     then:
@@ -140,6 +145,7 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
         .withProjectDir(testProjectDir.root)
         .withArguments('build')
         .withPluginClasspath(pluginClasspath)
+        .withGradleVersion(gradleVersion())
         .build()
 
     then:
@@ -166,6 +172,7 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
         .withProjectDir(testProjectDir.root)
         .withArguments('build')
         .withPluginClasspath(pluginClasspath)
+        .withGradleVersion(gradleVersion())
         .buildAndFail()
 
     then:
@@ -184,6 +191,7 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
         .withProjectDir(testProjectDir.root)
         .withArguments('build')
         .withPluginClasspath(pluginClasspath)
+        .withGradleVersion(gradleVersion())
         .build()
 
     then:
@@ -202,6 +210,7 @@ class SonarPackagingIntegSpec extends SonarPackagingBaseIntegSpec {
         .withProjectDir(testProjectDir.root)
         .withArguments('build')
         .withPluginClasspath(pluginClasspath)
+        .withGradleVersion(gradleVersion())
         .build()
 
     then:

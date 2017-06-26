@@ -45,6 +45,7 @@ class PomConfigurationIntegTest extends SonarPackagingBaseIntegSpec {
       .withProjectDir(testProjectDir.root)
       .withArguments('install')
       .withPluginClasspath(pluginClasspath)
+      .withGradleVersion(gradleVersion())
       .build()
 
     then:
@@ -64,6 +65,7 @@ class PomConfigurationIntegTest extends SonarPackagingBaseIntegSpec {
       .withProjectDir(testProjectDir.root)
       .withArguments('build', 'publish')
       .withPluginClasspath(pluginClasspath)
+      .withGradleVersion(gradleVersion())
       .build()
 
     then:

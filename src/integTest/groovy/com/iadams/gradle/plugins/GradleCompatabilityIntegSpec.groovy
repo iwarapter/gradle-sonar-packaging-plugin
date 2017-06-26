@@ -26,12 +26,14 @@ package com.iadams.gradle.plugins
 
 import com.iadams.gradle.plugins.utils.SonarPackagingBaseIntegSpec
 import org.gradle.testkit.runner.GradleRunner
+import spock.lang.IgnoreIf
 import spock.lang.Unroll
 
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS
 
 class GradleCompatabilityIntegSpec extends SonarPackagingBaseIntegSpec {
 
+  @IgnoreIf({ Boolean.valueOf(env['CI']) })
   @Unroll
   def "compatible with gradle #gradleVersion"() {
     setup:
