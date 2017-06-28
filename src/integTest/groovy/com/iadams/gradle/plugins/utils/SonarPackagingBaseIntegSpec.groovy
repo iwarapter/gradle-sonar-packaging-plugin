@@ -42,7 +42,7 @@ class SonarPackagingBaseIntegSpec extends Specification {
   List<File> pluginClasspath
 
   def gradleVersion(){
-    return System.getenv('GRADLE_VERSION') == null ? System.getenv('GRADLE_VERSION') : '3.5'
+    return System.getenv('GRADLE_VERSION') != null ? System.getenv('GRADLE_VERSION') : '3.5'
   }
 
   def setup() {
