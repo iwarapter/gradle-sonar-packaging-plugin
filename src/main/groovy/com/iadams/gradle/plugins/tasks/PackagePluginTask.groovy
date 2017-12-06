@@ -207,7 +207,11 @@ class PackagePluginTask extends Jar {
   }
 
   private void checkPluginClass() throws GradleException {
-    if (!new File(project.sourceSets.main.output.classesDir, getPluginClass().replace('.', '/') + ".class").exists()) {
+    String pluginClassPath = getPluginClass().replace('.', '/') + ".class";
+    boolean pluginClassExists = project.sourceSets.main.output.classesDirs.files
+            .collect { file -> file.toPath().resolve(pluginClassPath).toFile().exists() }
+            .any()
+    if (!pluginClassExists) {
       throw new GradleException("Plugin class not found: " + getPluginClass())
     }
   }
